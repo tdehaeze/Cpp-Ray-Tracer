@@ -9,7 +9,7 @@ void Scene::addSphere(const Sphere sphere){
 }
 
 Sphere Scene::getSphere(Ray ray){
-    Sphere firstSphere = Sphere(Vector( 0, 0, 0 ), 0);
+    Sphere firstSphere = Sphere(Vector( 0, 0, 0 ), 0,Vector(1, 1, 1));
     double tMin = -1;
     for(int i = 0; i < static_cast<int>( spheres.size() ); i++) {
         double t = ray.getIntersect(spheres[i]);

@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "Light.h"
 #include "Scene.h"
+#include "Material.h"
 
 using namespace std;
 
@@ -22,12 +23,12 @@ int main()
     Ray ray = Ray (center, Vector(0, 0, 1));
 
     Scene scene = Scene();
-    scene.addSphere(Sphere(Vector(0, 0, -10), 20));
-    scene.addSphere(Sphere(Vector(-1000, 0, 0), 970));
-    scene.addSphere(Sphere(Vector(1000, 0, 0), 970));
-    scene.addSphere(Sphere(Vector(0, 1000, 0), 970));
-    scene.addSphere(Sphere(Vector(0, -1000, 0), 970));
-    scene.addSphere(Sphere(Vector(0, 0, -1000), 970));
+    scene.addSphere(Sphere(Vector(0, 0, -10), 20, Vector(100, 100, 100)));
+    scene.addSphere(Sphere(Vector(-1000, 0, 0), 970, Vector(0, 0, 100)));
+    scene.addSphere(Sphere(Vector(1000, 0, 0), 970, Vector(0, 100, 0)));
+    scene.addSphere(Sphere(Vector(0, 1000, 0), 970, Vector(100, 0, 0)));
+    scene.addSphere(Sphere(Vector(0, -1000, 0), 970, Vector(0, 100, 100)));
+    scene.addSphere(Sphere(Vector(0, 0, -1000), 970, Vector(100, 0, 100)));
 
     Light light = Light(Vector(-10, -10, 50), 1000000);
 
@@ -48,10 +49,12 @@ int main()
 
                 if (t > 0){
                     double intensity = ray.getIntensity(firstSphere, t, light);
-                    intensity = min(255.0, intensity);
-                    pixels[H*i+j] = intensity;
-                    pixels[H*i+j+H*W] = intensity;
-                    pixels[H*i+j+2*H*W] = intensity;
+                    double red   = min(255.0, intensity*firstSphere.material[0]);
+                    double green = min(255.0, intensity*firstSphere.material[1]);
+                    double blue  = min(255.0, intensity*firstSphere.material[2]);
+                    pixels[H*i+j] = red;
+                    pixels[H*i+j+H*W] = green;
+                    pixels[H*i+j+2*H*W] = blue;
                 } else {
                     pixels[H*i+j] = 0;
                     pixels[H*i+j+H*W] = 0;
