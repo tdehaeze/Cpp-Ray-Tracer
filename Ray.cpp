@@ -5,7 +5,8 @@ Ray::Ray(Vector orig, Vector direct){
     direction = direct;
 }
 
-double Ray::getIntersect(const Sphere sphere){
+/* get if the ray is crossing the sphere one time or two times or not at all */
+double Ray::getDistanceToSphere(const Sphere sphere){
     double t;
 
     Vector CO = origin - sphere.origin;

@@ -14,7 +14,7 @@ public:
     Vector origin;
     Vector direction;
     Ray(Vector orig, Vector direct);
-    double getIntersect(const Sphere sphere);
+    double getDistanceToSphere(const Sphere sphere);
     double getIntensity(const Sphere sphere, double t, Light light);
     /* N'appelez cette fonction que si il y a une intersection */
     /* Vector getIntersect(const Sphere sphere); */
