@@ -1,20 +1,38 @@
 #include "main.h"
 
 #define EPSILON 0.001
+#define Z_CAMERA 60
 
 /* Define the scene with all the spheres and return the scene object */
 Scene defineScene()
 {
     Scene scene = Scene();
-    /* sphere, color, mirror, transparent, indice */
-    scene.addSphere(Sphere(Vector(0,     10,    20),   20,  Vector(1, 1, 1), 0, 1, 1.1)); /* main sphere */
-    scene.addSphere(Sphere(Vector(0,     0,    -10),   10,  Vector(1, 1, 1), 0, 0, 1)); /* main sphere */
-    scene.addSphere(Sphere(Vector(-1000, 0,     0),     970, Vector(1, 0, 0), 0, 0, 1)); /* left */
-    scene.addSphere(Sphere(Vector(1000,  0,     0),     970, Vector(1, 0, 0), 0, 0, 1)); /* right */
-    scene.addSphere(Sphere(Vector(0,     1000,  0),     970, Vector(1, 0, 0), 0, 0, 1)); /* bottom */
-    scene.addSphere(Sphere(Vector(0,     -1000, 0),     970, Vector(1, 0, 0), 0, 0, 1)); /* top */
-    scene.addSphere(Sphere(Vector(0,     0,     -1000), 970, Vector(0, 1, 0), 0, 0, 1)); /* front */
-    scene.addSphere(Sphere(Vector(0,     0,     1045),  970, Vector(0, 1, 0), 0, 0, 1)); /* back */
+    int sphere_size = 10000;
+    int top         = 40;
+    int bottom      = 10;
+    int right       = 30;
+    int left        = 30;
+    int front       = 80;
+    int back        = 10;
+
+    /* origine, radius, color, mirror, transparent, indice */
+    int radius           = 10;
+    int from_bottom      = 0;
+    int from_front       = 30;
+    int horizontal_right = 0;
+    scene.addSphere(Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, Vector(25,25,112), 0, 1, 1.1));
+    radius           = 5;
+    from_bottom      = 0;
+    from_front       = 10;
+    horizontal_right = 0;
+    scene.addSphere(Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, Vector(25,25,112), 1, 0, 1));
+
+    scene.addSphere(Sphere(Vector(-(sphere_size+left), 0,                  0),                             sphere_size, Vector(178, 34,  34),  0, 0, 1)); /* left */
+    scene.addSphere(Sphere(Vector(sphere_size+right,   0,                  0),                             sphere_size, Vector(154, 205, 50),  0, 0, 1)); /* right */
+    scene.addSphere(Sphere(Vector(0,                   sphere_size+bottom, 0),                             sphere_size, Vector(0,   139, 139), 0, 0, 1)); /* bottom */
+    scene.addSphere(Sphere(Vector(0,                   -(sphere_size+top), 0),                             sphere_size, Vector(210, 105, 30),  0, 0, 1)); /* top */
+    scene.addSphere(Sphere(Vector(0,                   0,                  -(sphere_size+front-Z_CAMERA)), sphere_size, Vector(119, 136, 153), 0, 0, 1)); /* front */
+    scene.addSphere(Sphere(Vector(0,                   0,                  sphere_size+back+Z_CAMERA),     sphere_size, Vector(173, 255, 47),  0, 0, 1)); /* back */
     return scene;
 }
 
@@ -258,8 +276,8 @@ int main()
     const int W = 1024; /* width: number of pixels */
     const int H = 1024; /* height: number of pixels */
 
-    const Vector center = Vector(0, 0, 55); /* point of view: start point for the ray, we look at the negative z */
-    const int fov = 80; /* field of view */
+    const Vector center = Vector(0, 0, Z_CAMERA); /* point of view: start point for the ray, we look at the negative z */
+    const int fov = 60; /* field of view */
 
     const int max_bounce = 5; /* maximal bounce for one ray */
 
