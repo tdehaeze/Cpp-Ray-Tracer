@@ -1,10 +1,12 @@
 #include "Sphere.h"
 
-Sphere::Sphere(Vector orig, double rad, Vector mat, int secul){
+Sphere::Sphere(Vector orig, double rad, Vector mat, int mirr, int transp, double ind){
     origin = orig;
     radius = rad;
     mat.Normalize();
     material = mat;
-    seculaire = secul;
+    mirror = mirr;
+    transparent = transp;
+    indice = ind;
 }
 

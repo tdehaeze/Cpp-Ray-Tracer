@@ -1,30 +1,20 @@
-#include <stdio.h>
-#include <math.h>
-#include <vector>
-#include <random>
-#include <iostream>
-#include "CImg/CImg.h"
+#include "main.h"
 
-#include "Vector.h"
-#include "Ray.h"
-#include "Sphere.h"
-#include "Light.h"
-#include "Scene.h"
-#include "Material.h"
-
-using namespace std;
+#define EPSILON 0.001
 
 /* Define the scene with all the spheres and return the scene object */
 Scene defineScene()
 {
     Scene scene = Scene();
-    scene.addSphere(Sphere(Vector(0, 10, -10), 15, Vector(1, 1, 1), 1)); /* main sphere */
-    scene.addSphere(Sphere(Vector(-1000, 0, 0), 970, Vector(1, 0, 0), 0)); /* left */
-    scene.addSphere(Sphere(Vector(1000, 0, 0), 970, Vector(1, 0, 0), 1)); /* right */
-    scene.addSphere(Sphere(Vector(0, 1000, 0), 970, Vector(1, 0, 0), 0)); /* bottom */
-    scene.addSphere(Sphere(Vector(0, -1000, 0), 970, Vector(1, 0, 0), 0)); /* top */
-    scene.addSphere(Sphere(Vector(0, 0, -1000), 970, Vector(0, 1, 0), 0)); /* front */
-    scene.addSphere(Sphere(Vector(0, 0, 1045), 970, Vector(0, 1, 0), 0)); /* back */
+    /* sphere, color, mirror, transparent, indice */
+    scene.addSphere(Sphere(Vector(0,     10,    20),   20,  Vector(1, 1, 1), 0, 1, 1.1)); /* main sphere */
+    scene.addSphere(Sphere(Vector(0,     0,    -10),   10,  Vector(1, 1, 1), 0, 0, 1)); /* main sphere */
+    scene.addSphere(Sphere(Vector(-1000, 0,     0),     970, Vector(1, 0, 0), 0, 0, 1)); /* left */
+    scene.addSphere(Sphere(Vector(1000,  0,     0),     970, Vector(1, 0, 0), 0, 0, 1)); /* right */
+    scene.addSphere(Sphere(Vector(0,     1000,  0),     970, Vector(1, 0, 0), 0, 0, 1)); /* bottom */
+    scene.addSphere(Sphere(Vector(0,     -1000, 0),     970, Vector(1, 0, 0), 0, 0, 1)); /* top */
+    scene.addSphere(Sphere(Vector(0,     0,     -1000), 970, Vector(0, 1, 0), 0, 0, 1)); /* front */
+    scene.addSphere(Sphere(Vector(0,     0,     1045),  970, Vector(0, 1, 0), 0, 0, 1)); /* back */
     return scene;
 }
 
@@ -49,7 +39,7 @@ Vector getIntersectNormal(double dist_sphere, Ray ray, Sphere sphere)
 Vector getIntersectPoint(double dist_sphere, Ray ray, Sphere sphere)
 {
     Vector intersect_normal = getIntersectNormal(dist_sphere, ray, sphere);
-    Vector intersect_point = ray.origin + dist_sphere*ray.direction + 0.001*intersect_normal;
+    Vector intersect_point = ray.origin + dist_sphere*ray.direction + EPSILON*intersect_normal;
     return intersect_point;
 }
 
@@ -74,13 +64,29 @@ Ray getReflectedRay(Ray ray, Sphere sphere, Vector intersect_point, double dist_
     return reflected_ray;
 }
 
+/* get the refracted ray */
+Ray getRefractedRay(Ray ray, Vector intersect_point, Vector intersect_normal, double ind_before, double ind_after)
+{
+    double ind_frac = ind_before/ind_after;
+    double prod_scalaire = abs(intersect_normal*ray.direction);
+
+    Vector refracted_direction = ind_frac*ray.direction - (-ind_frac*prod_scalaire + sqrt(1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire)))*intersect_normal;
+    refracted_direction.Normalize();
+
+    if (intersect_normal*ray.direction > 0) { /* we are inside the sphere and going outside */
+        return Ray(intersect_point+0.01*intersect_normal, refracted_direction);
+    } else { /* we are outside the sphere and comming inside */
+        return Ray(intersect_point-0.01*intersect_normal, refracted_direction);
+    }
+}
+
 /* set the intensity and the color */
-void setIntensity(vector<unsigned char> &pixels, int i, int j, int H, int W, Sphere sphere, double dist, Light light, Ray ray)
+void setIntensity(vector<unsigned char> &pixels, int i, int j, int H, int W, Sphere sphere, double dist, Light light, Ray ray, double coef)
 {
     double intensity = ray.getIntensity(sphere, dist, light);
-    double red   = min(255.0, intensity*sphere.material[0]);
-    double green = min(255.0, intensity*sphere.material[1]);
-    double blue  = min(255.0, intensity*sphere.material[2]);
+    double red   = min(255.0, coef*intensity*sphere.material[0]);
+    double green = min(255.0, coef*intensity*sphere.material[1]);
+    double blue  = min(255.0, coef*intensity*sphere.material[2]);
     pixels[H*i+j]       = red;
     pixels[H*i+j+H*W]   = green;
     pixels[H*i+j+2*H*W] = blue;
@@ -111,18 +117,22 @@ void setColorOfRayOnSphere(Ray ray, Sphere sphere, Light light, Scene scene, vec
 
     if (sphere_bis.radius <= 0) { /* If there is no sphere between the point and the source light */
         /* TODO : techniquement, ça n'arrive jamais car ici la scene est entourée de spheres */
-        setIntensity(pixels, i, j, H, W, sphere, dist_sphere, light, ray);
+        setIntensity(pixels, i, j, H, W, sphere, dist_sphere, light, ray, 1);
     } else { /* If there is one sphere on the ray path */
         double dist_sphere_bis = ray_dir_light.getDistanceToSphere(sphere_bis); /* dist_sphere_bis is the distance to the sphere */
 
-        /* TODO : should do a method on Vector to get the distance between two points */
         /* get the distance from the intersect point to the light */
         double distance_light = (light.origin - intersect_point).norm();
 
         if (dist_sphere_bis > 0 && dist_sphere_bis < distance_light){ /* if the sphere is between the point and the light source => shadow */
-            setIntensityToBlack(pixels, i, j, H, W);
+            /* std::cout << "sphere => shadow \n"; */
+            if (sphere_bis.transparent == 1) {
+                setIntensity(pixels, i, j, H, W, sphere, dist_sphere, light, ray, 0.3);
+            } else {
+                setIntensityToBlack(pixels, i, j, H, W);
+            }
         } else { /* if the sphere is after the light source => light */
-            setIntensity(pixels, i, j, H, W, sphere, dist_sphere, light, ray);
+            setIntensity(pixels, i, j, H, W, sphere, dist_sphere, light, ray, 1);
         }
     }
 }
@@ -150,7 +160,7 @@ void setColorOfRayOnMirror(Ray ray, Sphere sphere, Light light, Scene scene, con
         if (crossed_sphere.radius <= 0) { /* If there is no sphere that the reflected ray crosses */
             setIntensityToBlack(pixels, i, j, H, W);
         } else { /* If there is one sphere on the reflected ray path */
-            if (crossed_sphere.seculaire == 1) { /* if the sphere crossed is also a mirror */
+            if (crossed_sphere.mirror == 1) { /* if the sphere crossed is also a mirror */
                 setColorOfRayOnMirror(reflected_ray, crossed_sphere, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
             } else { /* if the sphere is not a mirror */
                 setColorOfRayOnSphere(reflected_ray, crossed_sphere, light, scene, pixels, i, j, H, W);
@@ -159,6 +169,87 @@ void setColorOfRayOnMirror(Ray ray, Sphere sphere, Light light, Scene scene, con
     } else {
         /* max number of bounce => black */
         setIntensityToBlack(pixels, i, j, H, W);
+    }
+}
+
+void setColorOfRayOnTransparent(Ray ray, Sphere sphere, Light light, Scene scene, const int max_bounce, int &bounce_counter, vector<unsigned char> &pixels, int i, int j, const int H, const int W)
+{
+/* ===============================
+ * get the indice before crossing the sphere
+ * =============================== */
+    /* get the distance to the crossed sphere */
+    double dist_sphere = ray.getDistanceToSphere(sphere);
+
+    /* get the intersect point */
+    Vector intersect_point = getIntersectPoint(dist_sphere, ray, sphere);
+
+    /* get the intersect normal */
+    Vector intersect_normal = getIntersectNormal(dist_sphere, ray, sphere);
+
+    /* get a point just before crossing the sphere (depending if we where inside or outside the sphere) */
+    Vector point_before_cross;
+    if (intersect_normal*ray.direction > 0) {
+        point_before_cross = intersect_point - 0.01*intersect_normal;
+    } else {
+        point_before_cross = intersect_point + 0.01*intersect_normal;
+    }
+
+    /* get the current sphere */
+    Sphere current_sphere = scene.getCurrentSphere(point_before_cross);
+
+    /* get the current indice */
+    double current_indice = current_sphere.indice;
+
+/* ===============================
+ * get the indice after crossing the sphere
+ * =============================== */
+    /* get a point just after crossing the sphere (depending if we where inside or outside the sphere) */
+    Vector point_after_cross;
+    if (intersect_normal*ray.direction > 0) {
+        point_after_cross = intersect_point + 0.01*intersect_normal;
+    } else {
+        point_after_cross = intersect_point - 0.01*intersect_normal;
+    }
+
+    /* get the next sphere */
+    Sphere next_sphere = scene.getCurrentSphere(point_after_cross);
+
+    /* get the next indice */
+    double next_indice = next_sphere.indice;
+
+    double ind_frac = current_indice/next_indice;
+    double prod_scalaire = abs(intersect_normal*ray.direction);
+    double frac = 1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire);
+
+    if (frac < 0) { /* only reflexion */
+        /* std::cout << "reflexion" << '\n'; */
+        setColorOfRayOnMirror(ray, sphere, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
+    } else { /* only refraction */
+        /* calculate the refracted ray */
+        /* std::cout << "refraction : " << ind_frac << '\n'; */
+        /* std::cout << "i : " << i << " ; j : " << j << '\n'; */
+        Ray refracted_ray = getRefractedRay(ray, intersect_point, intersect_normal, current_indice, next_indice);
+        mainfunction(refracted_ray, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
+    }
+}
+
+void mainfunction(Ray ray, Light light, Scene scene, const int max_bounce, int &bounce_counter, vector<unsigned char> &pixels, int i, int j, const int H, const int W)
+{
+    Sphere sphere = scene.getSphere(ray); /* get the first sphere that the ray crosses, if there is not, the radius of the sphere is -1 */
+
+    if (sphere.radius <= 0) { /* If the ray cross no sphere */
+        /* std::cout << "no sphere" << '\n'; */
+        /* no light on the pixel => black */
+        setIntensityToBlack(pixels, i, j, H, W);
+    } else { /* If the ray cross one sphere */
+        if (sphere.mirror == 1) { /* if the sphere is a mirror */
+            setColorOfRayOnMirror(ray, sphere, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
+        } else if (sphere.transparent == 1) { /* If the sphere is transparent */
+            setColorOfRayOnTransparent(ray, sphere, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
+        } else { /* if the sphere is a normal sphere */
+            /* std::cout << "normal sphere" << '\n'; */
+            setColorOfRayOnSphere(ray, sphere, light, scene, pixels, i, j, H, W);
+        }
     }
 }
 
@@ -187,21 +278,7 @@ int main()
         for (int j = 0; j < W; j++) {
             bounce_counter = 0;
             ray = getPixelRay(i, j, W, H, fov, center); /* get the initial ray object for one pixel */
-
-            Sphere firstSphere = scene.getSphere(ray); /* get the first sphere that the ray crosses, if there is not, the radius of the sphere is -1 */
-
-            if (firstSphere.radius <= 0) { /* If the ray cross no sphere */
-                /* no light on the pixel => black */
-                setIntensityToBlack(pixels, i, j, H, W);
-            } else { /* If the ray cross one sphere */
-                if (firstSphere.seculaire  == 1) { /* if the sphere is a mirror */
-                    /* set the color for the ray on the mirror */
-                    setColorOfRayOnMirror(ray, firstSphere, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
-                } else { /* If the sphere is not a mirror */
-                    /* set the color for the ray on the sphere */
-                    setColorOfRayOnSphere(ray, firstSphere, light, scene, pixels, i, j, H, W);
-                }
-            }
+            mainfunction(ray, light, scene, max_bounce, bounce_counter, pixels, i, j, H, W);
         }
         if (i%10 == 0)
             std::cout << 100*i/H << "%\n";

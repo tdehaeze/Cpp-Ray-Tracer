@@ -16,7 +16,7 @@ public:
     Scene();
     void addSphere(const Sphere sphere);
     Sphere getSphere(Ray ray);
-    /* double getIntensity(const Sphere sphere, double t, Light light); */
+    Sphere getCurrentSphere(Vector position);
 };
 
 #endif
