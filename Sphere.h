@@ -12,7 +12,8 @@ public:
     Vector origin;
     double radius;
     Vector material;
-    Sphere(Vector orig, double rad, Vector mat);
+    int seculaire;
+    Sphere(Vector orig, double rad, Vector mat, int secul);
 };
 
 #endif
