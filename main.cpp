@@ -16,15 +16,15 @@ Scene defineScene()
     int back        = 10;
 
     /* origine, radius, color, mirror, transparent, indice */
-    int radius           = 10;
+    int radius           = 8;
     int from_bottom      = 0;
     int from_front       = 30;
     int horizontal_right = 0;
-    scene.addSphere(Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, Vector(25,25,112), 0, 1, 1.1));
+    scene.addSphere(Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, Vector(25,25,112), 0, 1, 2));
     radius           = 5;
     from_bottom      = 0;
     from_front       = 10;
-    horizontal_right = 0;
+    horizontal_right = -10;
     scene.addSphere(Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, Vector(25,25,112), 1, 0, 1));
 
     scene.addSphere(Sphere(Vector(-(sphere_size+left), 0,                  0),                             sphere_size, Vector(178, 34,  34),  0, 0, 1)); /* left */
@@ -102,9 +102,9 @@ Ray getRefractedRay(Ray ray, Vector intersect_point, Vector intersect_normal, do
 void setIntensity(vector<unsigned char> &pixels, int i, int j, int H, int W, Sphere sphere, double dist, Light light, Ray ray, double coef)
 {
     double intensity = ray.getIntensity(sphere, dist, light);
-    double red   = min(255.0, coef*intensity*sphere.material[0]);
-    double green = min(255.0, coef*intensity*sphere.material[1]);
-    double blue  = min(255.0, coef*intensity*sphere.material[2]);
+    double red   = min(255.0, pow(coef*intensity*sphere.material[0], 1./2.2));
+    double green = min(255.0, pow(coef*intensity*sphere.material[1], 1./2.2));
+    double blue  = min(255.0, pow(coef*intensity*sphere.material[2], 1./2.2));
     pixels[H*i+j]       = red;
     pixels[H*i+j+H*W]   = green;
     pixels[H*i+j+2*H*W] = blue;
@@ -287,7 +287,7 @@ int main()
 
     Scene scene = defineScene(); /* setup the scene with the spheres */
 
-    Light light = Light(Vector(-20, -20, 50), 2000000); /* setup the light source position and luminosity */
+    Light light = Light(Vector(-20, -20, 50), 1000000000); /* setup the light source position and luminosity */
 
     vector<unsigned char> pixels(3*H*W,0); /* define the array of pixels */
 
