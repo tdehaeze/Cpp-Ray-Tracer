@@ -6,6 +6,8 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <omp.h>
+
 #include "CImg/CImg.h"
 
 #include "Vector.h"

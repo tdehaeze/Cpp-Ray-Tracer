@@ -291,6 +291,8 @@ int main()
 
     vector<unsigned char> pixels(3*H*W,0); /* define the array of pixels */
 
+#pragma omp parallel for schedule(dynamic,1)
+
     /* for each pixels */
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {

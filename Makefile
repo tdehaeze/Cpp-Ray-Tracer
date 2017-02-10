@@ -1,5 +1,5 @@
 main: main.cpp
-		g++ -Wall -o main.o *.cpp -O1 -O2 -Dcimg_display=0
+		clang-omp++ -Wall -fopenmp -o main.o *.cpp -O1 -O2 -Dcimg_display=0
 
 clean:
 		rm -f *~
