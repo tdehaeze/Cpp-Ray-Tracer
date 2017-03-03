@@ -1,0 +1,16 @@
+class A {
+    public:
+        virtual bool inside(const Vector&) const=0;
+        virtual void intersect(const Ray &, const ListObjets & ) const=0;
+}
+
+class Union:public A {
+    Objet* a;
+    Objet* b;
+    bool inside (const Vector& v) const {
+        return a->inside(v) || b->inside(v);
+    }
+}
+
+/* cylindre */
+
