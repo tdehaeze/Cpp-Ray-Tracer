@@ -2,18 +2,28 @@
 #define DEF_VECTOR
 
 #include <vector>
-#include <math.h>
+#include <math.h> 
 
 class Vector {
 public:
-    double xyz[3];
-
+    /* Constructeur */
     Vector(double x = 0, double y = 0, double z = 0);
+
+    /* Constructeur de copie */
     Vector(const Vector& b);
+
+    /* Getter */
+    double getX() const;
+    double getY() const;
+    double getZ() const;
+
     double operator[](int i) const;
-    double norm();
-    double squaredNorm();
+    double norm() const;
+    double squaredNorm() const;
     void Normalize();
+
+private:
+    double xyz[3];
 };
 
 Vector operator+( Vector const& a,Vector const& b);
