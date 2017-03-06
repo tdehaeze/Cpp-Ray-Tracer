@@ -6,7 +6,7 @@
 class Material {
 public:
     /* Constructor */
-    Material(Vector m_color = Vector(0, 0, 0), double m_transparency = 0., double m_reflectivity = 0.);
+    Material(Vector m_color = Vector(1., 1., 1.), double m_transparency = 0., double m_reflectivity = 0.);
 
     /* Getters */
     Vector getColor() const;

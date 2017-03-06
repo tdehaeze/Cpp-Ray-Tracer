@@ -21,9 +21,9 @@ int main()
 
     Ray ray = Ray (center, Vector(0, 0, 1)); /* initialize the ray */
 
-    Light light = Light(Vector(-20, -20, 50), 1000000); /* setup the light source position and luminosity */
+    Light light = Light(Vector(-20, -20, 50), 100000000); /* setup the light source position and luminosity */
 
-    Material material = Material();
+    Material material = Material(Vector(1, 0, 0));
 
     Sphere* sphere = new Sphere(Vector(0, 0, -70+Z_CAMERA), 10, &material);
     Sphere* sphere_bis = new Sphere(Vector(0, 20, -70+Z_CAMERA), 5, &material);
@@ -47,9 +47,12 @@ int main()
                 pixels[H*i+j+2*H*W] = 0;
             } else {
                 double intensity = intersect_object->getIntensity(ray, light);
-                pixels[H*i+j]       = std::min(255., intensity);
-                pixels[H*i+j+H*W]   = std::min(255., intensity);
-                pixels[H*i+j+2*H*W] = std::min(255., intensity);
+                double red   = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[0], 1./2.2));
+                double green = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[1], 1./2.2));
+                double blue  = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[2], 1./2.2));
+                pixels[H*i+j]       = red;
+                pixels[H*i+j+H*W]   = green;
+                pixels[H*i+j+2*H*W] = blue;
             }
         }
         if (i%10 == 0)

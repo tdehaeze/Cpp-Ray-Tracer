@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Vector.h"
 #include "Ray.h"
+#include "Material.h"
 
 class Object {
 public:
@@ -14,6 +15,7 @@ public:
     virtual ~Object();
 
     virtual double getDistance(const Ray rayon) const = 0;
+    virtual Material* getMaterial() const = 0;
     virtual Vector* getIntersect(const Ray rayon) const = 0;
     virtual Vector* getNormal(const Ray rayon) const = 0;
     virtual Vector* getReflectedRay(const Ray rayon) const = 0;
