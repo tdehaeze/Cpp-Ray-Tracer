@@ -1,5 +1,7 @@
 #include "Sphere.h"
 
+#define EPSILON 0.001
+
 Sphere::Sphere(Vector m_origin, double m_radius, Material* m_material)
     : Object(), origin(m_origin), radius(m_radius), material(m_material) {}
 
@@ -82,11 +84,15 @@ bool Sphere::isInside(Vector point) const{
     return (std::pow(point.getX()-origin.getX(), 2) + std::pow(point.getX()-origin.getX(),2) + std::pow(point.getX()-origin.getX(), 2) < radius);
 }
 
-Vector* Sphere::getReflectedRay(Ray rayon) const{
-    return 0;
+Ray* Sphere::getReflectedRay(Ray rayon) const{
+    Vector intersect_normal = *getNormal(rayon);
+    Vector incident_vector = rayon.getDirection();
+    Vector reflected_vector = incident_vector - 2*(incident_vector*intersect_normal)*intersect_normal;
+    Ray* reflected_ray = new Ray(*getIntersect(rayon)+EPSILON*intersect_normal, reflected_vector);
+    return reflected_ray;
 }
 
-Vector* Sphere::getRefractedRay(Ray rayon) const{
+Ray* Sphere::getRefractedRay(Ray rayon) const{
     return 0;
 }
 

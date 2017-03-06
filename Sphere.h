@@ -25,8 +25,8 @@ public:
     double getDistance(const Ray rayon) const;
     Vector* getIntersect(const Ray rayon) const;
     Vector* getNormal(const Ray rayon) const;
-    Vector* getReflectedRay(const Ray rayon) const;
-    Vector* getRefractedRay(const Ray rayon) const;
+    Ray* getReflectedRay(const Ray rayon) const;
+    Ray* getRefractedRay(const Ray rayon) const;
     bool isInside(const Vector point) const;
 
 protected:

@@ -18,8 +18,8 @@ public:
     virtual Material* getMaterial() const = 0;
     virtual Vector* getIntersect(const Ray rayon) const = 0;
     virtual Vector* getNormal(const Ray rayon) const = 0;
-    virtual Vector* getReflectedRay(const Ray rayon) const = 0;
-    virtual Vector* getRefractedRay(const Ray rayon) const = 0;
+    virtual Ray* getReflectedRay(const Ray rayon) const = 0;
+    virtual Ray* getRefractedRay(const Ray rayon) const = 0;
 
     virtual double getIntensity(const Ray rayon, const Light light) const;
 
