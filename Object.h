@@ -1,15 +1,19 @@
-#ifndef DEF_RAY
-#define DEF_RAY
+#ifndef DEF_OBJECT
+#define DEF_OBJECT
+
+#include "Vector.h"
+#include "Ray.h"
 
 class Object {
 public:
-    Vector origin;
-    Vector direction;
-    Ray(Vector orig, Vector direct);
-    double getDistanceToSphere(const Sphere sphere);
-    double getIntensity(const Sphere sphere, double t, Light light);
-    /* N'appelez cette fonction que si il y a une intersection */
-    /* Vector getIntersect(const Sphere sphere); */
+    /* Constructeur */
+    Object();
+
+    /* Destructeur */
+    virtual ~Object();
+
+    virtual Vector* getIntersect(Ray rayon) const = 0;
+    virtual bool isInside(Vector point) const = 0;
 };
 
 #endif

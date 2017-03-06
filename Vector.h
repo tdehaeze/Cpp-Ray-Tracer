@@ -2,7 +2,9 @@
 #define DEF_VECTOR
 
 #include <vector>
-#include <math.h> 
+#include <cmath> 
+
+using namespace std;
 
 class Vector {
 public:
@@ -22,11 +24,11 @@ public:
     double squaredNorm() const;
     void Normalize();
 
-private:
+protected:
     double xyz[3];
 };
 
-Vector operator+( Vector const& a,Vector const& b);
+Vector operator+(const Vector& a,const Vector& b);
 Vector operator-(const Vector& a,const Vector& b);
 Vector operator-(const Vector& a);
 Vector operator*(const double a, const Vector& b);

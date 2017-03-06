@@ -1,14 +1,21 @@
 #ifndef DEF_LIGHT
 #define DEF_LIGHT
 
-#include <math.h>
+#include <cmath>
 #include "Vector.h"
 
 class Light {
 public:
+    /* constructor */
+    Light(Vector m_origin, double m_intensity);
+
+    /* getter */
+    Vector getOrigin() const;
+    double getIntensity() const;
+
+protected:
     Vector origin;
     double intensity;
-    Light(Vector orig, double intens);
 };
 
 #endif

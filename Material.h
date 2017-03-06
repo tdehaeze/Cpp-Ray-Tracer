@@ -1,15 +1,22 @@
 #ifndef DEF_MATERIAL
 #define DEF_MATERIAL
 
-#include <string.h>
-#include <math.h>
-
 #include "Vector.h"
 
 class Material {
 public:
-    Vector colors;
-    Material(Vector colors_init);
+    /* Constructor */
+    Material(Vector m_color = Vector(0, 0, 0), double m_transparency = 0., double m_reflectivity = 0.);
+
+    /* Getters */
+    Vector getColor() const;
+    double getTransparency() const;
+    double getReflectivity() const;
+
+protected:
+    Vector color;
+    double transparency;
+    double reflectivity;
 };
 
 #endif

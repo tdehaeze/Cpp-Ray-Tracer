@@ -1,22 +1,34 @@
 #ifndef DEF_SCENE
 #define DEF_SCENE
 
-#include <string.h>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <vector>
 
 #include "Vector.h"
+#include "Object.h"
 #include "Sphere.h"
+
 #include "Ray.h"
 
 class Scene {
 public:
-    std::vector<Sphere> spheres;
+    /* constructeur */
     Scene();
-    void addSphere(const Sphere sphere);
-    Sphere getSphere(Ray ray);
-    Sphere getCurrentSphere(Vector position);
+
+    /* Destructeur */
+    ~Scene();
+
+    /* getter */
+    std::vector<Object*> getObjects() const;
+
+    void addSphere(Object* object);
+
+    /* Sphere getSphere(Ray ray); */
+    /* Sphere getCurrentSphere(Vector position); */
+
+protected:
+    std::vector<Object*> objects;
 };
 
 #endif
