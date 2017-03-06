@@ -12,7 +12,7 @@ std::vector<Object*> Scene::getObjects() const{
     return objects;
 }
 
-void Scene::addSphere(Object* object){
+void Scene::addObject(Object* object){
     objects.push_back(object);
 }
 
@@ -49,8 +49,27 @@ Vector* Scene::getNormal(Ray rayon) const{
     }
 }
 
+Object* Scene::getCurrentObject(Vector position)
+{
+    Object* object = 0;
+    double min_distance = -1;
+
+    for(int i = 0; i < static_cast<int>( objects.size() ); i++) {
+        if (objects[i]->isInside(position)) {
+            double distance_to_center = (position - objects[i]->getCenter()).norm();
+            if (min_distance == -1 || distance_to_center < min_distance) {
+                min_distance = distance_to_center;
+                object = objects[i];
+            }
+        }
+    }
+
+    return object;
+}
+
+
 /* void Scene::addSphere(const Sphere sphere){ */
-/*     spheres.push_back(sphere); */
+/*     objects.push_back(sphere); */
 /* } */
 
 /* /1* get the first sphere that the ray crosses */
@@ -58,29 +77,12 @@ Vector* Scene::getNormal(Ray rayon) const{
 /* Sphere Scene::getSphere(Ray ray){ */
 /*     Sphere first_sphere = Sphere(Vector(0, 0, 0), 0, Vector(1, 1, 1), 0, 0, 1); */
 /*     double tMin = -1; */
-/*     for(int i = 0; i < static_cast<int>( spheres.size() ); i++) { */
-/*         double t = ray.getDistanceToSphere(spheres[i]); */
+/*     for(int i = 0; i < static_cast<int>( objects.size() ); i++) { */
+/*         double t = ray.getDistanceToSphere(objects[i]); */
 /*         if (t > -1 && (t < tMin || tMin < 0)) { */
 /*             tMin = t; */
-/*             first_sphere = spheres[i]; */
+/*             first_sphere = objects[i]; */
 /*         } */
 /*     } */
 /*     return first_sphere; */
-/* } */
-
-/* Sphere Scene::getCurrentSphere(Vector position) */
-/* { */
-/*     Sphere sphere = Sphere(Vector(0, 0, 0), 0, Vector(1, 1, 1), 0, 0, 1); */
-
-/*     double min_radius = -1; */
-
-/*     for(int i = 0; i < static_cast<int>( spheres.size() ); i++) { */
-/*         double distance_to_center = (position - spheres[i].origin).norm(); */
-/*         if (distance_to_center < spheres[i].radius) { /1* we are inside the sphere *1/ */
-/*             if (min_radius == -1 || spheres[i].radius < min_radius) */
-/*                 sphere = spheres[i]; */
-/*         } */
-/*     } */
-
-/*     return sphere; */
 /* } */

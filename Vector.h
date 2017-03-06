@@ -17,9 +17,14 @@ public:
     double getY() const;
     double getZ() const;
 
+    /* Opérateurs racourcis */
+    Vector& operator+=(const Vector& a);
+    Vector& operator-=(const Vector& a);
+
     double operator[](int i) const;
     double norm() const;
     double squaredNorm() const;
+
     void Normalize();
 
 protected:

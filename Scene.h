@@ -22,7 +22,7 @@ public:
     /* getter */
     std::vector<Object*> getObjects() const;
 
-    void addSphere(Object* object);
+    void addObject(Object* object);
 
     Object* getIntersectedObject(const Ray rayon) const;
 
@@ -33,7 +33,7 @@ public:
 
 
     /* Sphere getSphere(Ray ray); */
-    /* Sphere getCurrentSphere(Vector position); */
+    Object* getCurrentObject(Vector position);
 
 protected:
     std::vector<Object*> objects;

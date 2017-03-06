@@ -59,3 +59,17 @@ Vector operator^(const Vector& a, const Vector& b){
 Vector operator/(const Vector& a, const double b){
     return Vector(a.getX()/b, a.getY()/b, a.getZ()/b);
 }
+
+Vector& Vector::operator+=(const Vector& a){
+    this->xyz[0] += a.getX();
+    this->xyz[1] += a.getY();
+    this->xyz[2] += a.getZ();
+    return *this;
+}
+
+Vector& Vector::operator-=(const Vector& a){
+    this->xyz[0] -= a.getX();
+    this->xyz[1] -= a.getY();
+    this->xyz[2] -= a.getZ();
+    return *this;
+}

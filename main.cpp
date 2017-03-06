@@ -1,7 +1,59 @@
 #include "main.h"
 
-#define EPSILON 0.001
 #define Z_CAMERA 60
+
+Scene defineScene()
+{
+    Scene scene = Scene();
+
+    double sphere_size = 10000;
+    double top         = 40;
+    double bottom      = 10;
+    double right       = 30;
+    double left        = 30;
+    double front       = 180;
+    double back        = 10;
+
+    double radius           = 8;
+    double from_bottom      = 0;
+    double from_front       = 90;
+    double horizontal_right = 0;
+
+    Material* blue        = new Material(Vector(25,  25,  112));
+    Material* red         = new Material(Vector(178, 34,  34));
+    Material* green       = new Material(Vector(154, 205, 50));
+    Material* cyan        = new Material(Vector(0,   139, 139));
+    Material* orange      = new Material(Vector(210, 105, 30));
+    Material* grey        = new Material(Vector(119, 136, 153));
+    Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.);
+    Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.1);
+
+
+    Sphere * sphere_blue = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, mirroir);
+    radius           = 5;
+    from_bottom      = 0;
+    from_front       = 50;
+    horizontal_right = -10;
+    Sphere * sphere_blue_bis = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue);
+
+    Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red);
+    Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green);
+    Sphere * sphere_bottom = new Sphere(Vector(0, sphere_size+bottom, 0), sphere_size, cyan);
+    Sphere * sphere_top    = new Sphere(Vector(0, -(sphere_size+top), 0), sphere_size, orange);
+    Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey);
+    Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey);
+
+    scene.addObject(sphere_blue);
+    scene.addObject(sphere_blue_bis);
+    scene.addObject(sphere_left);
+    scene.addObject(sphere_right);
+    scene.addObject(sphere_bottom);
+    scene.addObject(sphere_top);
+    scene.addObject(sphere_back);
+    scene.addObject(sphere_front);
+
+    return scene;
+}
 
 std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce) {
     Object* intersect_object = scene.getIntersectedObject(ray);
@@ -9,11 +61,40 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce) {
     if (intersect_object != 0 && *bounce < 5) {
         if (intersect_object->getMaterial()->getReflectivity() != 0.) {
             *bounce += 1;
-            std::cout << *bounce << std::endl;
-            Ray * reflected_ray = intersect_object->getReflectedRay(ray);
-            colors = getColor(*reflected_ray, light, scene, bounce);
+            std::cout << intersect_object->getMaterial()->getReflectivity() << std::endl;
+            Ray reflected_ray = intersect_object->getReflectedRay(ray);
+            colors = getColor(reflected_ray, light, scene, bounce);
+        } else if (intersect_object->getMaterial()->getTransparency() != 0.) {
+            Vector point_before_intersect = intersect_object->getPointBeforeIntersect(ray);
+            /* Vector point_after_intersect = intersect_object->getPointAfterIntersect(ray); */
+
+            double current_indice, next_indice;
+
+            if ( intersect_object->isInside(point_before_intersect) ) { /* going outside object */
+                current_indice = intersect_object->getMaterial()->getIndice();
+                next_indice = 1.;
+            } else {
+                current_indice = 1.;
+                next_indice = intersect_object->getMaterial()->getIndice();
+            }
+
+            double ind_frac = current_indice/next_indice;
+            Vector intersect_normal = *intersect_object->getNormal(ray);
+            double prod_scalaire = std::abs(intersect_normal*ray.getDirection());
+            double frac = 1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire);
+
+            if (frac < 0) { /* only reflexion */
+                *bounce += 1;
+                std::cout << *bounce << std::endl;
+                Ray reflected_ray = intersect_object->getReflectedRay(ray);
+                colors = getColor(reflected_ray, light, scene, bounce);
+            } else { /* only refraction */
+                Ray refracted_ray = intersect_object->getRefractedRay(ray, current_indice, next_indice);
+                colors = getColor(refracted_ray, light, scene, bounce);
+            }
+
         } else {
-            Ray ray_to_light = Ray(*scene.getIntersect(ray)+EPSILON*(*scene.getNormal(ray)), light);
+            Ray ray_to_light = Ray(*scene.getIntersect(ray)+0.0001*(*scene.getNormal(ray)), light);
             Object* intersect_object_light = scene.getIntersectedObject(ray_to_light);
 
             if (intersect_object_light == 0 || (intersect_object_light != 0 && intersect_object_light->getDistance(ray_to_light) > (*intersect_object->getIntersect(ray) - light.getOrigin()).norm())) {
@@ -34,24 +115,14 @@ int main()
     const int H = 1024; /* height: number of pixels */
 
     const Vector center = Vector(0, 0, Z_CAMERA); /* point of view: start point for the ray, we look at the negative z */
-    const int fov = 60; /* field of view */
+    const int fov = 40; /* field of view */
 
     Ray ray = Ray (center, Vector(0, 0, 1)); /* initialize the ray */
 
-    Light light = Light(Vector(-20, -20, 50), 100000000); /* setup the light source position and luminosity */
+    Light light = Light(Vector(-20, -20, 50), 1000000); /* setup the light source position and luminosity */
 
-    Material white = Material();
-    Material mirroir = Material(Vector(1., 1., 1.), 0., 1.);
 
-    Sphere* sphere = new Sphere(Vector(0, 0, -70+Z_CAMERA), 10, &white);
-    Sphere* sphere_bis = new Sphere(Vector(0, 20, -70+Z_CAMERA), 5, &mirroir);
-    Sphere* sphere_bottom = new Sphere(Vector(0, 10040, 0), 10000, &white);
-
-    Scene scene = Scene();
-
-    scene.addSphere(sphere);
-    scene.addSphere(sphere_bis);
-    scene.addSphere(sphere_bottom);
+    Scene scene = defineScene();
 
     std::vector<unsigned char> pixels(3*H*W,0); /* define the array of pixels */
 
