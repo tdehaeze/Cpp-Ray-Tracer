@@ -24,6 +24,14 @@ public:
 
     void addSphere(Object* object);
 
+    Object* getIntersectedObject(const Ray rayon) const;
+
+    Vector* getIntersect(const Ray rayon) const;
+    Vector* getNormal(const Ray rayon) const;
+    Vector* getReflectedRay(const Ray rayon) const;
+    Vector* getRefractedRay(const Ray rayon) const;
+
+
     /* Sphere getSphere(Ray ray); */
     /* Sphere getCurrentSphere(Vector position); */
 

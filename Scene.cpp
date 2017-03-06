@@ -16,6 +16,38 @@ void Scene::addSphere(Object* object){
     objects.push_back(object);
 }
 
+Object* Scene::getIntersectedObject(Ray rayon) const{
+    Object* closest_object = 0;
+    double t_min = -1;
+
+    for(int i = 0; i < static_cast<int>( objects.size() ); i++) {
+        double t = objects[i]->getDistance(rayon);
+        if (t > -1 && (t < t_min || t_min < 0)) {
+            closest_object = objects[i];
+            t_min = t;
+        }
+    }
+
+    return closest_object;
+}
+
+Vector* Scene::getIntersect(Ray rayon) const{
+    Object* closest_object = getIntersectedObject(rayon);
+    if (closest_object == 0) {
+        return 0;
+    } else {
+        return closest_object->getIntersect(rayon);
+    }
+}
+
+Vector* Scene::getNormal(Ray rayon) const{
+    Object* closest_object = getIntersectedObject(rayon);
+    if (closest_object == 0) {
+        return 0;
+    } else {
+        return closest_object->getNormal(rayon);
+    }
+}
 
 /* void Scene::addSphere(const Sphere sphere){ */
 /*     spheres.push_back(sphere); */

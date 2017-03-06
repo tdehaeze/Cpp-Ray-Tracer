@@ -14,8 +14,8 @@
 #include "Light.h"
 #include "Object.h"
 #include "Sphere.h"
+#include "Scene.h"
 
-/* #include "Scene.h" */
 
 /* Scene defineScene(); */
 

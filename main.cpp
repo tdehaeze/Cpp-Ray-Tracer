@@ -3,14 +3,6 @@
 #define EPSILON 0.001
 #define Z_CAMERA 60
 
-/* for one pixel, return the ray object */
-Ray getPixelRay(int i, int j, int W, int H, int fov, Vector center)
-{
-    Vector rayDirection = Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360)));
-    rayDirection.Normalize();
-    return Ray(center, rayDirection);;
-}
-
 /* /1* get the normalize vector normal to the sphere on the intersection point *1/ */
 /* Vector getIntersectNormal(double dist_sphere, Ray ray, Sphere sphere) */
 /* { */
@@ -29,27 +21,35 @@ int main()
 
     Ray ray = Ray (center, Vector(0, 0, 1)); /* initialize the ray */
 
-    /* Light light = Light(Vector(-20, -20, 50), 1000000000); /1* setup the light source position and luminosity *1/ */
+    Light light = Light(Vector(-20, -20, 50), 1000000); /* setup the light source position and luminosity */
 
     Material material = Material();
 
     Sphere* sphere = new Sphere(Vector(0, 0, -70+Z_CAMERA), 10, &material);
+    Sphere* sphere_bis = new Sphere(Vector(0, 20, -70+Z_CAMERA), 5, &material);
+
+    Scene scene = Scene();
+
+    scene.addSphere(sphere);
+    scene.addSphere(sphere_bis);
 
     std::vector<unsigned char> pixels(3*H*W,0); /* define the array of pixels */
 
     /* for each pixels */
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
-            ray = getPixelRay(i, j, W, H, fov, center); /* get the initial ray object for one pixel */
-            Vector* intersect_point = sphere->getIntersect(ray);
-            if (intersect_point == 0) {
+            /* ray = Ray(i, j, W, H, fov, center); /1* get the initial ray object for one pixel *1/ */
+            ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360))));
+            Object* intersect_object = scene.getIntersectedObject(ray);
+            if (intersect_object == 0) {
                 pixels[H*i+j]       = 0;
                 pixels[H*i+j+H*W]   = 0;
                 pixels[H*i+j+2*H*W] = 0;
             } else {
-                pixels[H*i+j]       = 255;
-                pixels[H*i+j+H*W]   = 255;
-                pixels[H*i+j+2*H*W] = 255;
+                double intensity = intersect_object->getIntensity(ray, light);
+                pixels[H*i+j]       = std::min(255., intensity);
+                pixels[H*i+j+H*W]   = std::min(255., intensity);
+                pixels[H*i+j+2*H*W] = std::min(255., intensity);
             }
         }
         if (i%10 == 0)
@@ -58,8 +58,6 @@ int main()
 
     cimg_library::CImg<unsigned char> cimg(&pixels[0], W, H, 1, 3);
     cimg.save("fichier.bmp");
-
-    delete sphere;
 
     return 0;
 }

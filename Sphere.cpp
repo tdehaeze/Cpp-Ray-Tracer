@@ -20,6 +20,27 @@ Material* Sphere::getMaterial() const{
 }
 
 Vector* Sphere::getIntersect(Ray rayon) const{
+    double t = getDistance(rayon);
+    if (t > 0) {
+        Vector* intersect_point = new Vector(rayon.getOrigin() + t*rayon.getDirection());
+        return intersect_point;
+    } else {
+        return 0;
+    }
+}
+
+Vector* Sphere::getNormal(Ray rayon) const{
+    double t = getDistance(rayon);
+    if (t > 0) {
+        Vector* intersect_normal = new Vector(rayon.getOrigin() + t*rayon.getDirection() - origin);
+        intersect_normal->Normalize();
+        return intersect_normal;
+    } else {
+        return 0;
+    }
+}
+
+double Sphere::getDistance(Ray rayon) const{
     double t;
 
     Vector CO = rayon.getOrigin() - origin;
@@ -54,14 +75,18 @@ Vector* Sphere::getIntersect(Ray rayon) const{
         }
     }
 
-    if (t > 0) {
-        Vector* intersect_point = new Vector(rayon.getOrigin() + t*rayon.getDirection());
-        return intersect_point;
-    } else {
-        return 0;
-    }
+    return t;
 }
 
 bool Sphere::isInside(Vector point) const{
     return (std::pow(point.getX()-origin.getX(), 2) + std::pow(point.getX()-origin.getX(),2) + std::pow(point.getX()-origin.getX(), 2) < radius);
 }
+
+Vector* Sphere::getReflectedRay(Ray rayon) const{
+    return 0;
+}
+
+Vector* Sphere::getRefractedRay(Ray rayon) const{
+    return 0;
+}
+

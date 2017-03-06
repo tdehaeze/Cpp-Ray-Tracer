@@ -16,14 +16,19 @@ public:
     /* Destructeur */
     ~Sphere();
 
-    /* getter */
+    /* Getter */
     Vector getOrigin() const;
     double getRadius() const;
     Material* getMaterial() const;
 
-    /* masquage */
-    Vector* getIntersect(Ray rayon) const;
-    bool isInside(Vector point) const;
+    /* Masquage */
+    double getDistance(const Ray rayon) const;
+    Vector* getIntersect(const Ray rayon) const;
+    Vector* getNormal(const Ray rayon) const;
+    bool isInside(const Vector point) const;
+
+    Vector* getReflectedRay(const Ray rayon) const;
+    Vector* getRefractedRay(const Ray rayon) const;
 
 protected:
     Vector origin;

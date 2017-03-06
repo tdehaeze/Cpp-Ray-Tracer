@@ -1,7 +1,21 @@
 #include "Ray.h"
 
 Ray::Ray(Vector m_origin, Vector m_direction)
-    : origin(m_origin), direction(m_direction) {}
+    : origin(m_origin), direction(m_direction)
+{
+    direction.Normalize();
+}
+
+Ray::Ray(Vector m_origin, Light light)
+    : origin(m_origin), direction(light.getOrigin()-m_origin)
+{
+    direction.Normalize();
+}
+
+/* Ray::Ray(int i, int j, int W, int H, int fov, Vector center) */
+/*     : origin(center), direction(Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360)))) { */
+/*     direction.Normalize(); */
+/* } */
 
 
 Vector Ray::getOrigin() const {
@@ -50,21 +64,5 @@ Vector Ray::getDirection() const {
 /*     } */
 
 /*     return t; */
-/* } */
-
-/* double Ray::getIntensity(const Sphere sphere, double t, Light light){ */
-/*     double intensity; */
-
-/*     /1* Vector l = light.getOrigin() - (origin + t * direction); *1/ */
-/*     /1* l.Normalize(); *1/ */
-/*     /1* Vector n = origin + t * direction - sphere.getOrigin(); *1/ */
-/*     /1* n.Normalize(); *1/ */
-
-/*     /1* double d1 = (origin + t * direction).norm(); *1/ */
-/*     /1* double d2 = (light.getOrigin() - (origin + t * direction)).norm(); *1/ */
-
-/*     /1* intensity = std::max(0.0, l*n)*light.intensity/((d1 + d2)*(d1+d2)); *1/ */
-
-/*     return intensity; */
 /* } */
 

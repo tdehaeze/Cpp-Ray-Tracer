@@ -4,8 +4,6 @@
 #include <vector>
 #include <cmath> 
 
-using namespace std;
-
 class Vector {
 public:
     /* Constructeur */
