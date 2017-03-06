@@ -44,7 +44,7 @@ int main()
 
                 }
 
-                Ray ray_to_light = Ray(*scene.getIntersect(ray), light);
+                Ray ray_to_light = Ray(*scene.getIntersect(ray)+EPSILON*(*scene.getNormal(ray)), light);
                 Object* intersect_object_light = scene.getIntersectedObject(ray_to_light);
 
                 if (intersect_object_light == 0 || (intersect_object_light != 0 && intersect_object_light->getDistance(ray_to_light) > (*intersect_object->getIntersect(ray) - light.getOrigin()).norm())) {
