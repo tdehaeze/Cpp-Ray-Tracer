@@ -8,6 +8,7 @@
 #include "Vector.h"
 #include "Object.h"
 #include "Sphere.h"
+#include "Plan.h"
 
 #include "Ray.h"
 

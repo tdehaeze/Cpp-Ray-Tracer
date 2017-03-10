@@ -14,8 +14,13 @@
 #include "Light.h"
 #include "Object.h"
 #include "Sphere.h"
+#include "Plan.h"
 #include "Scene.h"
 
+
+std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract);
+
+std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract);
 
 /* Scene defineScene(); */
 

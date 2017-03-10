@@ -14,9 +14,9 @@ Scene defineScene()
     double front       = 180;
     double back        = 10;
 
-    double radius           = 8;
+    double radius           = 14;
     double from_bottom      = 0;
-    double from_front       = 90;
+    double from_front       = 100;
     double horizontal_right = 0;
 
     Material* blue        = new Material(Vector(25,  25,  112));
@@ -25,28 +25,30 @@ Scene defineScene()
     Material* cyan        = new Material(Vector(0,   139, 139));
     Material* orange      = new Material(Vector(210, 105, 30));
     Material* grey        = new Material(Vector(119, 136, 153));
-    Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.);
-    Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.1);
+    /* Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.); */
+    /* Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3); */
 
 
-    Sphere * sphere_blue = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, mirroir);
-    radius           = 5;
-    from_bottom      = 0;
-    from_front       = 50;
-    horizontal_right = -10;
-    Sphere * sphere_blue_bis = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue);
+    Sphere * sphere_blue = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue);
+    /* radius           = 5; */
+    /* from_bottom      = 0; */
+    /* from_front       = 50; */
+    /* horizontal_right = -10; */
+    /* Sphere * sphere_blue_bis = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue); */
+
+    Plan * plan_right = new Plan(Vector(right, 0, 0), Vector(1, 0, 0), green);
 
     Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red);
-    Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green);
+    /* Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green); */
     Sphere * sphere_bottom = new Sphere(Vector(0, sphere_size+bottom, 0), sphere_size, cyan);
     Sphere * sphere_top    = new Sphere(Vector(0, -(sphere_size+top), 0), sphere_size, orange);
     Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey);
     Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey);
 
     scene.addObject(sphere_blue);
-    scene.addObject(sphere_blue_bis);
+    /* scene.addObject(sphere_blue_bis); */
     scene.addObject(sphere_left);
-    scene.addObject(sphere_right);
+    scene.addObject(plan_right);
     scene.addObject(sphere_bottom);
     scene.addObject(sphere_top);
     scene.addObject(sphere_back);
@@ -55,26 +57,30 @@ Scene defineScene()
     return scene;
 }
 
-std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce) {
+std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract) {
+    std::vector<double> colors {0, 0, 0};
+    *bounce += 1;
+    std::cout << "reflexion on reflective object" << std::endl;
+    Ray reflected_ray = object->getReflectedRay(ray);
+    colors = getColor(reflected_ray, light, scene, bounce, refract);
+    return colors;
+}
+
+std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract) {
     Object* intersect_object = scene.getIntersectedObject(ray);
     std::vector<double> colors {0, 0, 0};
-    if (intersect_object != 0 && *bounce < 5) {
-        if (intersect_object->getMaterial()->getReflectivity() != 0.) {
-            *bounce += 1;
-            std::cout << intersect_object->getMaterial()->getReflectivity() << std::endl;
-            Ray reflected_ray = intersect_object->getReflectedRay(ray);
-            colors = getColor(reflected_ray, light, scene, bounce);
-        } else if (intersect_object->getMaterial()->getTransparency() != 0.) {
-            Vector point_before_intersect = intersect_object->getPointBeforeIntersect(ray);
-            /* Vector point_after_intersect = intersect_object->getPointAfterIntersect(ray); */
+    if (intersect_object != 0 && *bounce < 2 && *refract < 5) {
+        if (intersect_object->getMaterial()->getReflectivity() != 0.) { /* Mirroir Object */
+            colors = getColorMirroir(intersect_object, ray, light, scene, bounce, refract);
+        } else if (intersect_object->getMaterial()->getTransparency() != 0.) { /* Transparent Object */
+            double current_indice = 1.;
+            double next_indice = 1.;
 
-            double current_indice, next_indice;
-
-            if ( intersect_object->isInside(point_before_intersect) ) { /* going outside object */
+            if ( intersect_object->isInside(intersect_object->getPointBeforeIntersect(ray)) ) { /* going outside object */
+                /* std::cout << "going outside" << std::endl; */
                 current_indice = intersect_object->getMaterial()->getIndice();
-                next_indice = 1.;
-            } else {
-                current_indice = 1.;
+            } else { /* going inside object */
+                /* std::cout << "going inside" << std::endl; */
                 next_indice = intersect_object->getMaterial()->getIndice();
             }
 
@@ -84,17 +90,16 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce) {
             double frac = 1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire);
 
             if (frac < 0) { /* only reflexion */
-                *bounce += 1;
-                std::cout << *bounce << std::endl;
-                Ray reflected_ray = intersect_object->getReflectedRay(ray);
-                colors = getColor(reflected_ray, light, scene, bounce);
+                colors = getColorMirroir(intersect_object, ray, light, scene, bounce, refract);
             } else { /* only refraction */
+                *refract += 1;
+                /* std::cout << "refraction" << std::endl; */
                 Ray refracted_ray = intersect_object->getRefractedRay(ray, current_indice, next_indice);
-                colors = getColor(refracted_ray, light, scene, bounce);
+                colors = getColor(refracted_ray, light, scene, bounce, refract);
             }
 
-        } else {
-            Ray ray_to_light = Ray(*scene.getIntersect(ray)+0.0001*(*scene.getNormal(ray)), light);
+        } else { /* Normal Object */
+            Ray ray_to_light = Ray(intersect_object->getPointBeforeIntersect(ray), light);
             Object* intersect_object_light = scene.getIntersectedObject(ray_to_light);
 
             if (intersect_object_light == 0 || (intersect_object_light != 0 && intersect_object_light->getDistance(ray_to_light) > (*intersect_object->getIntersect(ray) - light.getOrigin()).norm())) {
@@ -127,13 +132,15 @@ int main()
     std::vector<unsigned char> pixels(3*H*W,0); /* define the array of pixels */
 
     int bounce = 0;
+    int refract = 0;
 
     /* for each pixels */
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
             bounce = 0;
+            refract = 0;
             ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360))));
-            std::vector<double> colors = getColor(ray, light, scene, &bounce);
+            std::vector<double> colors = getColor(ray, light, scene, &bounce, &refract);
             pixels[H*i+j]       = colors[0];
             pixels[H*i+j+H*W]   = colors[1];
             pixels[H*i+j+2*H*W] = colors[2];

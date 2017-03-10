@@ -72,7 +72,7 @@ double Sphere::getDistance(Ray rayon) const{
         t2 = (-b-std::sqrt(delta))/(2*a);
         if (t1 > 0 && t2 > 0) {
             t = std::min(t1, t2);
-        } else if ((t1 < 0 && t2 > 0) || (t1 > 0 && t2 < 0)) {
+        } else if (t1*t2 < 0) {
             t = std::max(t1, t2);
         } else {
             t = -1;
@@ -90,10 +90,10 @@ Vector Sphere::getPointBeforeIntersect(Ray rayon) const{
     Vector point_before_intersect = *this->getIntersect(rayon);
     Vector intersect_normal = *this->getNormal(rayon);
 
-    if (intersect_normal*rayon.getDirection() > 0) {
-        point_before_intersect -= 0.0001*intersect_normal;
-    } else {
-        point_before_intersect += 0.0001*intersect_normal;
+    if (intersect_normal*rayon.getDirection() > 0) { /* we are inside the sphere and going outside */
+        point_before_intersect -= 0.01*intersect_normal;
+    } else { /* we are outside the sphere and comming inside */
+        point_before_intersect += 0.01*intersect_normal;
     }
 
     return point_before_intersect;
@@ -103,38 +103,37 @@ Vector Sphere::getPointAfterIntersect(Ray rayon) const{
     Vector point_after_intersect = *this->getIntersect(rayon);
     Vector intersect_normal = *this->getNormal(rayon);
 
-    if (intersect_normal*rayon.getDirection() > 0) {
-        point_after_intersect += 0.0001*intersect_normal;
-    } else {
-        point_after_intersect -= 0.0001*intersect_normal;
+    if (intersect_normal*rayon.getDirection() > 0) { /* we are inside the sphere and going outside */
+        point_after_intersect += 0.01*intersect_normal;
+    } else { /* we are outside the sphere and comming inside */
+        point_after_intersect -= 0.01*intersect_normal;
     }
 
     return point_after_intersect;
 }
 
 Ray Sphere::getReflectedRay(Ray rayon) const{
-    Vector intersect_normal = *this->getNormal(rayon);
-    Vector incident_vector = rayon.getDirection();
-    Vector reflected_vector = incident_vector - 2*(incident_vector*intersect_normal)*intersect_normal;
-    Ray reflected_ray = Ray(*this->getIntersect(rayon)+0.0001*intersect_normal, reflected_vector);
-    return reflected_ray;
+    Vector n = *this->getNormal(rayon);
+    Vector i = rayon.getDirection();
+
+    Vector reflected_vector = i - 2*(i*n)*n;
+
+    return Ray(this->getPointBeforeIntersect(rayon), reflected_vector);
 }
 
 Ray Sphere::getRefractedRay(Ray rayon, double ind_before, double ind_after) const{
-    Vector intersect_normal = *this->getNormal(rayon);
+    Vector n = *this->getNormal(rayon);
+    Vector i = rayon.getDirection();
+
+    /* if (n*i > 0){ /1* inside object to outside *1/ */
+    /*     n = -n; */
+    /* } */
 
     double ind_frac = ind_before/ind_after;
-    double prod_scalaire = std::abs(intersect_normal*rayon.getDirection());
 
-    Vector refracted_direction = ind_frac*rayon.getDirection() - (-ind_frac*prod_scalaire + std::sqrt(1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire)))*intersect_normal;
+    Vector refracted_direction = ind_frac*i - (-ind_frac*std::abs(n*i) + std::sqrt(1-ind_frac*ind_frac*(1 - (n*i)*(n*i))))*n;
     refracted_direction.Normalize();
 
-    Vector start_point = *this->getIntersect(rayon);
-    if (intersect_normal*rayon.getDirection() > 0) { /* we are inside the sphere and going outside */
-        start_point += 0.0001*intersect_normal;
-    } else { /* we are outside the sphere and comming inside */
-        start_point -= 0.0001*intersect_normal;
-    }
-    return Ray(start_point, refracted_direction);
+    return Ray(this->getPointAfterIntersect(rayon), refracted_direction);
 }
 
