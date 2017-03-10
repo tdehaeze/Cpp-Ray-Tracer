@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cmath> 
+#include <cstring> // for memcpy()
 
 class Vector {
 public:

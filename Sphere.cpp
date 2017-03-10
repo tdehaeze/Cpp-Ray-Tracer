@@ -47,11 +47,11 @@ Vector* Sphere::getNormal(Ray rayon) const{
 double Sphere::getDistance(Ray rayon) const{
     double t;
 
-    Vector CO = rayon.getOrigin() - origin;
+    Vector CO = rayon.getOrigin() - this->getOrigin();
 
     double a = 1;
     double b = 2*rayon.getDirection()*CO;
-    double c = CO.squaredNorm() - radius*radius;
+    double c = CO.squaredNorm() - this->getRadius()*this->getRadius();
 
     double delta = b*b - 4*a*c;
 

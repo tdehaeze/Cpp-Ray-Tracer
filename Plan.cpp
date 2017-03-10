@@ -1,7 +1,9 @@
 #include "Plan.h"
 
 Plan::Plan(Vector m_origin, Vector m_direction, Material* m_material)
-    : Object(), origin(m_origin), direction(m_direction), material(m_material) {}
+    : Object(), origin(m_origin), direction(m_direction), material(m_material) {
+        direction.Normalize();
+    }
 
 Plan::~Plan(){
 
@@ -43,11 +45,11 @@ Vector* Plan::getNormal(Ray rayon) const{
 double Plan::getDistance(Ray rayon) const{
     double t = -1;
 
-    /* if (rayon.getDirection()*this->getDirection() != 0) { */
-        t = ((this->getOrigin()-rayon.getOrigin())*direction)/(rayon.getDirection()*this->getDirection());
+    if (rayon.getDirection()*this->getDirection() != 0) {
+        t = ((this->getOrigin()-rayon.getOrigin())*this->getDirection())/(rayon.getDirection()*this->getDirection());
         if (t < 0)
             t = -1;
-    /* } */
+    }
 
     return t;
 }

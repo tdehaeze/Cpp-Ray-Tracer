@@ -16,7 +16,7 @@ Scene defineScene()
 
     double radius           = 10;
     double from_bottom      = 0;
-    double from_front       = 100;
+    double from_front       = 10;
     double horizontal_right = 0;
 
     Material* blue        = new Material(Vector(25,  25,  112));
@@ -25,24 +25,27 @@ Scene defineScene()
     Material* cyan        = new Material(Vector(0,   139, 139));
     Material* orange      = new Material(Vector(210, 105, 30));
     Material* grey        = new Material(Vector(119, 136, 153));
-    /* Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.); */
-    /* Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3); */
+    Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.);
+    Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3);
 
+    /* 
+     * droite -> (+, 0, 0)
+     * haut -> (0, -, 0)
+     * avant -> (0, 0, -)
+     * */
 
-    Sphere * sphere_blue = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue);
-    /* radius           = 5; */
-    /* from_bottom      = 0; */
-    /* from_front       = 50; */
-    /* horizontal_right = -10; */
-    /* Sphere * sphere_blue_bis = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue); */
+    Sphere * sphere_1 = new Sphere(Vector(-10, 0, 7), 3, transparent);
+    /* Sphere * sphere_2 = new Sphere(Vector(0, 0, 0), 6, blue); */
+    /* Sphere * sphere_3 = new Sphere(Vector(0, 0, 0), 6, blue); */
 
     Plan * plan_right = new Plan(Vector(30, 0, 0), Vector(-1, 0, 0), green);
     Plan * plan_left = new Plan(Vector(-30, 0, 0), Vector(1, 0, 0), red);
     Plan * plan_bottom = new Plan(Vector(0, 30, 0), Vector(0, -1, 0), cyan);
     Plan * plan_top = new Plan(Vector(0, -30, 0), Vector(0, 1, 0), orange);
     Plan * plan_front = new Plan(Vector(0, 0, 100), Vector(0, 0, -1), grey);
-    Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), grey);
+    Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), blue);
 
+    /* Cylindre * cylindre = new Cylindre(Vector(-10, 10, -10), Vector(0, -10, 0), 6, red); */
 
     /* Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red); */
     /* Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green); */
@@ -51,8 +54,10 @@ Scene defineScene()
     /* Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey); */
     /* Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey); */
 
-    scene.addObject(sphere_blue);
-    /* scene.addObject(sphere_blue_bis); */
+    scene.addObject(sphere_1);
+    /* scene.addObject(sphere_2); */
+    /* scene.addObject(sphere_3); */
+
     scene.addObject(plan_left);
     scene.addObject(plan_right);
     scene.addObject(plan_bottom);
@@ -60,13 +65,15 @@ Scene defineScene()
     scene.addObject(plan_back);
     scene.addObject(plan_front);
 
+    /* scene.addObject(cylindre); */
+
     return scene;
 }
 
 std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract) {
     std::vector<double> colors {0, 0, 0};
     *bounce += 1;
-    std::cout << "reflexion on reflective object" << std::endl;
+    /* std::cout << "reflexion on reflective object" << std::endl; */
     Ray reflected_ray = object->getReflectedRay(ray);
     colors = getColor(reflected_ray, light, scene, bounce, refract);
     return colors;
@@ -140,6 +147,10 @@ int main()
     int bounce = 0;
     int refract = 0;
 
+    auto start = std::chrono::steady_clock::now();
+
+/* #pragma omp parallel for schedule(dynamic,1) */
+
     /* for each pixels */
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
@@ -155,6 +166,12 @@ int main()
             std::cout << 100*i/H << "%\n";
     }
 
+    auto end = std::chrono::steady_clock::now();
+    auto diff_time = end-start;
+
+    std::cout << std::chrono::duration <double, std::milli> (diff_time).count() << std::endl;
+
+	std::cout << "writing file..." << std::endl;
     cimg_library::CImg<unsigned char> cimg(&pixels[0], W, H, 1, 3);
     cimg.save("fichier.bmp");
 

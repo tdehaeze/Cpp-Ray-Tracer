@@ -32,7 +32,7 @@ Object* Scene::getIntersectedObject(Ray rayon) const{
 }
 
 Vector* Scene::getIntersect(Ray rayon) const{
-    Object* closest_object = getIntersectedObject(rayon);
+    Object* closest_object = this->getIntersectedObject(rayon);
     if (closest_object == 0) {
         return 0;
     } else {
@@ -41,7 +41,7 @@ Vector* Scene::getIntersect(Ray rayon) const{
 }
 
 Vector* Scene::getNormal(Ray rayon) const{
-    Object* closest_object = getIntersectedObject(rayon);
+    Object* closest_object = this->getIntersectedObject(rayon);
     if (closest_object == 0) {
         return 0;
     } else {

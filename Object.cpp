@@ -16,7 +16,8 @@ double Object::getIntensity(Ray rayon, Light light) const{
 
     double d = (*this->getIntersect(rayon) - light.getOrigin()).norm();
 
-    intensity = std::abs(l*n)*light.getIntensity()/(d*d);
+    /* intensity = std::abs(l*n)*light.getIntensity()/(d*d); */
+    intensity = std::max(0.,l*n)*light.getIntensity()/(d*d);
 
     return intensity;
 }

@@ -6,6 +6,8 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <omp.h>
+#include <chrono>
 
 #include "CImg/CImg.h"
 
@@ -15,6 +17,7 @@
 #include "Object.h"
 #include "Sphere.h"
 #include "Plan.h"
+#include "Cylindre.h"
 #include "Scene.h"
 
 
