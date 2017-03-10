@@ -35,8 +35,8 @@ Vector* Plan::getIntersect(Ray rayon) const{
 
 Vector* Plan::getNormal(Ray rayon) const{
     Vector* normal = 0;
-    /* if (rayon.getDirection()*direction != 0) */
-        *normal = direction;
+    if (rayon.getDirection()*direction != 0)
+        normal = new Vector(direction);
     return normal;
 }
 

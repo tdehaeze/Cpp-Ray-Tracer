@@ -6,15 +6,15 @@ Scene defineScene()
 {
     Scene scene = Scene();
 
-    double sphere_size = 10000;
-    double top         = 40;
+    /* double sphere_size = 10000; */
+    /* double top         = 40; */
     double bottom      = 10;
-    double right       = 30;
-    double left        = 30;
+    /* double right       = 30; */
+    /* double left        = 30; */
     double front       = 180;
-    double back        = 10;
+    /* double back        = 10; */
 
-    double radius           = 14;
+    double radius           = 10;
     double from_bottom      = 0;
     double from_front       = 100;
     double horizontal_right = 0;
@@ -36,23 +36,29 @@ Scene defineScene()
     /* horizontal_right = -10; */
     /* Sphere * sphere_blue_bis = new Sphere(Vector(horizontal_right, bottom-radius-from_bottom, -front+radius+from_front+Z_CAMERA), radius, blue); */
 
-    Plan * plan_right = new Plan(Vector(right, 0, 0), Vector(1, 0, 0), green);
+    Plan * plan_right = new Plan(Vector(30, 0, 0), Vector(-1, 0, 0), green);
+    Plan * plan_left = new Plan(Vector(-30, 0, 0), Vector(1, 0, 0), red);
+    Plan * plan_bottom = new Plan(Vector(0, 30, 0), Vector(0, -1, 0), cyan);
+    Plan * plan_top = new Plan(Vector(0, -30, 0), Vector(0, 1, 0), orange);
+    Plan * plan_front = new Plan(Vector(0, 0, 100), Vector(0, 0, -1), grey);
+    Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), grey);
 
-    Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red);
+
+    /* Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red); */
     /* Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green); */
-    Sphere * sphere_bottom = new Sphere(Vector(0, sphere_size+bottom, 0), sphere_size, cyan);
-    Sphere * sphere_top    = new Sphere(Vector(0, -(sphere_size+top), 0), sphere_size, orange);
-    Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey);
-    Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey);
+    /* Sphere * sphere_bottom = new Sphere(Vector(0, sphere_size+bottom, 0), sphere_size, cyan); */
+    /* Sphere * sphere_top    = new Sphere(Vector(0, -(sphere_size+top), 0), sphere_size, orange); */
+    /* Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey); */
+    /* Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey); */
 
     scene.addObject(sphere_blue);
     /* scene.addObject(sphere_blue_bis); */
-    scene.addObject(sphere_left);
+    scene.addObject(plan_left);
     scene.addObject(plan_right);
-    scene.addObject(sphere_bottom);
-    scene.addObject(sphere_top);
-    scene.addObject(sphere_back);
-    scene.addObject(sphere_front);
+    scene.addObject(plan_bottom);
+    scene.addObject(plan_top);
+    scene.addObject(plan_back);
+    scene.addObject(plan_front);
 
     return scene;
 }
