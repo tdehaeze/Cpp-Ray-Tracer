@@ -9,24 +9,29 @@
 class Object {
 public:
     /* Constructeur */
-    Object();
+    Object(Material* m_material);
 
     /* Destructeur */
     virtual ~Object();
 
+    /* Getter */
+    virtual Material* getMaterial() const;
+
+    /* Méthodes virtuelles pures */
     virtual double getDistance(const Ray rayon) const = 0;
     virtual Vector getCenter() const = 0;
-    virtual Material* getMaterial() const = 0;
-    virtual Vector* getIntersect(const Ray rayon) const = 0;
     virtual Vector* getNormal(const Ray rayon) const = 0;
-    virtual Ray getReflectedRay(const Ray rayon) const = 0;
-    virtual Ray getRefractedRay(const Ray rayon, double ind_before, double ind_after) const = 0;
-    virtual Vector getPointBeforeIntersect(const Ray rayon) const = 0;
-    virtual Vector getPointAfterIntersect(const Ray rayon) const = 0;
+    virtual bool isInside(const Vector point) const = 0;
 
+    virtual Vector* getIntersect(const Ray rayon) const;
+    virtual Ray getReflectedRay(const Ray rayon) const;
+    virtual Ray getRefractedRay(const Ray rayon, double ind_before, double ind_after) const;
+    virtual Vector getPointBeforeIntersect(const Ray rayon) const;
+    virtual Vector getPointAfterIntersect(const Ray rayon) const;
     virtual double getIntensity(const Ray rayon, const Light light) const;
 
-    virtual bool isInside(const Vector point) const = 0;
+protected:
+    Material* material;
 };
 
 #endif

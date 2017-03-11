@@ -31,22 +31,15 @@ public:
     std::pair<double, double> getT1T2(const Ray rayon) const;
 
     /* Masquage */
-    Material* getMaterial() const;
     Vector getCenter() const;
     double getDistance(const Ray rayon) const;
-    Vector* getIntersect(const Ray rayon) const;
     Vector* getNormal(const Ray rayon) const;
-    Ray getReflectedRay(const Ray rayon) const;
-    Ray getRefractedRay(const Ray rayon, double ind_before, double ind_after) const;
-    Vector getPointBeforeIntersect(const Ray rayon) const;
-    Vector getPointAfterIntersect(const Ray rayon) const;
     bool isInside(const Vector point) const;
 
 protected:
     Vector a;
     Vector b;
     double radius;
-    Material* material;
 };
 
 #endif

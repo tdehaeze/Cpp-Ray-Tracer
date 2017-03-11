@@ -1,7 +1,7 @@
 #include "Cylindre.h"
 
 Cylindre::Cylindre(Vector m_a, Vector m_b, double m_radius, Material* m_material)
-    : Object(), a(m_a), b(m_b), radius(m_radius), material(m_material) {}
+    : Object(m_material), a(m_a), b(m_b), radius(m_radius) {}
 
 Cylindre::~Cylindre(){
 
@@ -35,10 +35,6 @@ Vector Cylindre::getNormalB() const{
     Vector normal_b = (this->getB()-this->getA());
     normal_b.Normalize();
     return normal_b;
-}
-
-Material* Cylindre::getMaterial() const{
-    return material;
 }
 
 Vector Cylindre::getCenter() const{
@@ -119,46 +115,14 @@ double Cylindre::getDistance(Ray rayon) const{
 
         if (t1 >= s1 && t1 <= s2) {
             t = t1;
-        } else if (t1 < s1 && t2 > s1) {
+        } else if (t1 < s1 && s1 < t2) {
             t = s1;
-        } else if (t1 < s2 && t2 > s2) {
+        } else if (t1 < s2 && s2 < t2) {
             t = s2;
         }
     }
 
     return t;
-}
-
-/* double Cylindre::getDistance(Ray rayon) const{ */
-/*     double t = -1; */
-    
-    /* std::pair<double, double> t1t2 = this->getT1T2(rayon); */
-
-    /* double t1 = t1t2.first; */
-    /* double t2 = t1t2.second; */
-
-    /* double s1 = this->getDistanceToPlanA(rayon); */
-    /* double s2 = this->getDistanceToPlanB(rayon); */
-
-    /* if (t1 > t2) */
-    /*     std::swap(t1, t2); */
-    /* if (s1 > s2) */
-    /*     std::swap(s1, s2); */
-
-    /* t = std::min(std::max(t1, s1), std::min(t2, s2)); */
-
-    /* return t; */
-/* } */
-
-
-Vector* Cylindre::getIntersect(Ray rayon) const{
-    double t = getDistance(rayon);
-    if (t > 0) {
-        Vector* intersect_point = new Vector(rayon.getOrigin() + t*rayon.getDirection());
-        return intersect_point;
-    } else {
-        return 0;
-    }
 }
 
 Vector* Cylindre::getNormal(Ray rayon) const{
@@ -194,56 +158,4 @@ bool Cylindre::isInside(Vector point) const{
 
     return is_inside;
 }
-
-Vector Cylindre::getPointBeforeIntersect(Ray rayon) const{
-    Vector point_before_intersect = *this->getIntersect(rayon);
-    Vector intersect_normal = *this->getNormal(rayon);
-
-    if (intersect_normal*rayon.getDirection() > 0) { /* we are "inside" and going outside */
-        point_before_intersect -= 0.01*intersect_normal;
-    } else { /* we are outside and comming inside */
-        point_before_intersect += 0.01*intersect_normal;
-    }
-
-    return point_before_intersect;
-}
-
-Vector Cylindre::getPointAfterIntersect(Ray rayon) const{
-    Vector point_after_intersect = *this->getIntersect(rayon);
-    Vector intersect_normal = *this->getNormal(rayon);
-
-    if (intersect_normal*rayon.getDirection() > 0) { /* we are "inside" and going outside */
-        point_after_intersect += 0.01*intersect_normal;
-    } else { /* we are outside and comming inside */
-        point_after_intersect -= 0.01*intersect_normal;
-    }
-
-    return point_after_intersect;
-}
-
-Ray Cylindre::getReflectedRay(Ray rayon) const{
-    Vector n = *this->getNormal(rayon);
-    Vector i = rayon.getDirection();
-
-    Vector reflected_vector = i - 2*(i*n)*n;
-
-    return Ray(this->getPointBeforeIntersect(rayon), reflected_vector);
-}
-
-Ray Cylindre::getRefractedRay(Ray rayon, double ind_before, double ind_after) const{
-    Vector n = *this->getNormal(rayon);
-    Vector i = rayon.getDirection();
-
-    /* if (n*i > 0){ /1* inside object to outside *1/ */
-    /*     n = -n; */
-    /* } */
-
-    double ind_frac = ind_before/ind_after;
-
-    Vector refracted_direction = ind_frac*i - (-ind_frac*std::abs(n*i) + std::sqrt(1-ind_frac*ind_frac*(1 - (n*i)*(n*i))))*n;
-    refracted_direction.Normalize();
-
-    return Ray(this->getPointAfterIntersect(rayon), refracted_direction);
-}
-
 
