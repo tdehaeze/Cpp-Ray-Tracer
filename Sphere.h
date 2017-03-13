@@ -7,6 +7,8 @@
 #include "Vector.h"
 #include "Material.h"
 #include "Ray.h"
+#include "global.h"
+#include "helping_functions.h"
 
 class Sphere : public Object {
 public:

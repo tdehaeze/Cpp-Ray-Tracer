@@ -16,7 +16,7 @@ double Sphere::getRadius() const{
 }
 
 Vector* Sphere::getNormal(Ray rayon) const{
-    double first_positive = this->getFirstPositive(this->getIntersections(rayon));
+    double first_positive = getFirstPositive(this->getIntersections(rayon));
 
     if (first_positive > 0) {
         Vector* intersect_normal = new Vector(rayon.getOrigin() + first_positive*rayon.getDirection() - this->getOrigin());

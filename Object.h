@@ -5,6 +5,8 @@
 #include "Vector.h"
 #include "Ray.h"
 #include "Material.h"
+#include "global.h"
+#include "helping_functions.h"
 
 class Object {
 public:
@@ -30,7 +32,6 @@ public:
     virtual Vector getPointBeforeIntersect(const Ray rayon) const;
     virtual Vector getPointAfterIntersect(const Ray rayon) const;
     virtual double getIntensity(const Ray rayon, const Light light) const;
-    virtual double getFirstPositive(const std::vector<double> t) const;
 
 protected:
     Material* material;

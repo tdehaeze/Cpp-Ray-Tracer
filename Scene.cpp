@@ -21,8 +21,9 @@ Object* Scene::getIntersectedObject(Ray rayon) const{
     double t_min = -1;
 
     for(auto const& object: this->getObjects()) {
+        if (DEBUG) std::cout << "predistance" << std::endl;
         double t = object->getDistance(rayon);
-        /* std::cout << "distance : " << t << std::endl; */
+        if (DEBUG) std::cout << "distance : " << t << std::endl;
         if (t > 0 && ( t < t_min || t_min < 0 )) {
             closest_object = object;
             t_min = t;
@@ -30,7 +31,7 @@ Object* Scene::getIntersectedObject(Ray rayon) const{
     }
 
     /* if (closest_object != 0){ */
-    /*     std::cout << "found CLOSEST OBJECT" << std::endl; */
+    /*     if (DEBUG) std::cout << "found CLOSEST OBJECT" << std::endl; */
     /* } */
 
     return closest_object;

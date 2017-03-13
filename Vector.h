@@ -5,6 +5,7 @@
 #include <cmath> 
 #include <cstring> // for memcpy()
 #include <iostream>
+#include "global.h"
 
 class Vector {
 public:

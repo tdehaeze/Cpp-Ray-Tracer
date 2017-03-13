@@ -34,30 +34,26 @@ std::vector<double> Intersection::getIntersections(const Ray rayon) const{
             t_tot.push_back(t);
     }
 
-    std::sort(t_tot.begin(), t_tot.end(), std::less<int>());
+    std::sort(t_tot.begin(), t_tot.end(), std::less<double>());
 
     return t_tot;
 }
 
 Object* Intersection::getIntersectedObject(const Ray rayon) const{
     std::vector<double> intersections = this->getIntersections(rayon);
-    double first_intersection = this->getFirstPositive(intersections);
+    double first_intersection = getFirstPositive(intersections);
 
     if (first_intersection >= 0) {
         Vector point_before = rayon.getOrigin()+( first_intersection+0.01 )*rayon.getDirection();
         Vector point_after = rayon.getOrigin()+( first_intersection-0.01 )*rayon.getDirection();
 
         if (!this->getObject1()->isInside(point_before)) {
-            std::cout << "Object 1, 1" << std::endl;
             return this->getObject1();
         } else if (!this->getObject2()->isInside(point_before)) {
-            std::cout << "Object 2, 1" << std::endl;
             return this->getObject2();
         } else if (!this->getObject2()->isInside(point_after)) {
-            std::cout << "Object 2" << std::endl;
             return this->getObject2();
         } else {
-            std::cout << "Object 1" << std::endl;
             return this->getObject1();
         }
     } else {

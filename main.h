@@ -21,7 +21,8 @@
 #include "Scene.h"
 #include "Union.h"
 #include "Intersection.h"
-
+#include "global.h"
+#include "helping_functions.h"
 
 std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract);
 

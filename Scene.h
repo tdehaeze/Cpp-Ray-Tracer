@@ -9,8 +9,8 @@
 #include "Object.h"
 #include "Sphere.h"
 #include "Plan.h"
-
 #include "Ray.h"
+#include "global.h"
 
 class Scene {
 public:

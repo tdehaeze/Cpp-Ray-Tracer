@@ -3,6 +3,7 @@
 
 #include "Vector.h"
 #include "Light.h"
+#include "global.h"
 
 class Ray {
 public:
