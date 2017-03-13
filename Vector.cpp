@@ -77,3 +77,8 @@ Vector& Vector::operator-=(const Vector& a){
     this->xyz[2] -= a.getZ();
     return *this;
 }
+
+std::ostream& operator<<(std::ostream& os, const Vector& v){  
+    return os << "X: " << v.getX() << "Y: " << v.getY() << "Z: " << v.getZ();
+}
+

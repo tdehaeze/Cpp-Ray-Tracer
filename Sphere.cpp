@@ -16,9 +16,7 @@ double Sphere::getRadius() const{
 }
 
 Vector* Sphere::getNormal(Ray rayon) const{
-    std::vector<double> t = this->getIntersections(rayon);
-
-    double first_positive = this->getFirstPositive(t);
+    double first_positive = this->getFirstPositive(this->getIntersections(rayon));
 
     if (first_positive > 0) {
         Vector* intersect_normal = new Vector(rayon.getOrigin() + first_positive*rayon.getDirection() - this->getOrigin());
@@ -43,18 +41,19 @@ std::vector<double> Sphere::getIntersections(const Ray rayon) const{
     if (delta == 0) {
         t.push_back(-b/(2*a));
     } else if (delta > 0){
-        t.push_back(-b+std::sqrt(delta));
-        t.push_back(-b-std::sqrt(delta));
+        t.push_back((-b+std::sqrt(delta))/(2*a));
+        t.push_back((-b-std::sqrt(delta))/(2*a));
     }
 
-    std::sort(t.begin(), t.end(), std::greater<int>());
+    std::sort(t.begin(), t.end(), std::less<double>());
+
+    if (t.size() == 2) {
+        /* std::cout << "T0 = " << t[0] << "T1 = " << t[1] << std::endl; */
+    }
 
     return t;
 }
 
-/* 
- * TODO : vérifier le bon fonctionnement
- * */
 bool Sphere::isInside(Vector point) const{
     return (std::pow(point.getX()-this->getOrigin().getX(), 2) + std::pow(point.getY()-this->getOrigin().getY(),2) + std::pow(point.getZ()-this->getOrigin().getZ(), 2) < std::pow(radius,2));
 }

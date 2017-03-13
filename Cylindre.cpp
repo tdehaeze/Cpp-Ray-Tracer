@@ -98,7 +98,7 @@ std::vector<double> Cylindre::getIntersectionsToCylindre(Ray rayon) const{
         t.push_back(-b-std::sqrt(delta));
     }
 
-    std::sort(t.begin(), t.end(), std::greater<int>());
+    std::sort(t.begin(), t.end(), std::less<int>());
 
     return t;
 }

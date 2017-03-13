@@ -32,10 +32,6 @@ public:
     Vector* getReflectedRay(const Ray rayon) const;
     Vector* getRefractedRay(const Ray rayon) const;
 
-
-    /* Sphere getSphere(Ray ray); */
-    /* Object* getCurrentObject(Vector position); */
-
 protected:
     std::vector<Object*> objects;
 };

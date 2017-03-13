@@ -56,7 +56,7 @@ std::vector<double> Union::getIntersections(const Ray rayon) const{
             t_tot.push_back(t);
     }
 
-    std::sort(t_tot.begin(), t_tot.end(), std::greater<int>());
+    std::sort(t_tot.begin(), t_tot.end(), std::less<int>());
 
     return t_tot;
 }

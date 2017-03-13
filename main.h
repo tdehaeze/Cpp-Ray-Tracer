@@ -19,6 +19,8 @@
 #include "Plan.h"
 #include "Cylindre.h"
 #include "Scene.h"
+#include "Union.h"
+#include "Intersection.h"
 
 
 std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract);

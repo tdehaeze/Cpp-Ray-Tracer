@@ -34,9 +34,10 @@ Scene defineScene()
      * avant -> (0, 0, -)
      * */
 
-    Sphere * sphere_1 = new Sphere(Vector(-10, 0, 7), 3, red);
-    /* Sphere * sphere_2 = new Sphere(Vector(0, 0, 0), 6, blue); */
-    /* Sphere * sphere_3 = new Sphere(Vector(0, 0, 0), 6, blue); */
+    Sphere * sphere_1 = new Sphere(Vector(-5, 0, 0), 7, red);
+    Sphere * sphere_2 = new Sphere(Vector( 5, 0, 0), 7, red);
+    Union * union_1 = new Union(sphere_1, sphere_2);
+    /* Sphere * sphere_3 = new Sphere(Vector(3, 0, -7), 2, green); */
 
     Plan * plan_right = new Plan(Vector(30, 0, 0), Vector(-1, 0, 0), green);
     Plan * plan_left = new Plan(Vector(-30, 0, 0), Vector(1, 0, 0), red);
@@ -45,7 +46,7 @@ Scene defineScene()
     Plan * plan_front = new Plan(Vector(0, 0, 100), Vector(0, 0, -1), grey);
     Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), blue);
 
-    Cylindre * cylindre = new Cylindre(Vector(-10, 10, -10), Vector(0, -10, 0), 9, transparent);
+    /* Cylindre * cylindre = new Cylindre(Vector(-10, 10, -10), Vector(0, -10, 0), 9, transparent); */
 
     /* Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red); */
     /* Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green); */
@@ -54,7 +55,9 @@ Scene defineScene()
     /* Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey); */
     /* Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey); */
 
-    scene.addObject(sphere_1);
+    scene.addObject(union_1);
+
+    /* scene.addObject(sphere_1); */
     /* scene.addObject(sphere_2); */
     /* scene.addObject(sphere_3); */
 
@@ -65,7 +68,7 @@ Scene defineScene()
     scene.addObject(plan_back);
     scene.addObject(plan_front);
 
-    scene.addObject(cylindre);
+    /* scene.addObject(cylindre); */
 
     return scene;
 }
@@ -117,6 +120,7 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int
 
             if (intersect_object_light == 0 || (intersect_object_light != 0 && intersect_object_light->getDistance(ray_to_light) > (*intersect_object->getIntersect(ray) - light.getOrigin()).norm())) {
                 double intensity = intersect_object->getIntensity(ray, light);
+                /* std::cout << "intensity : " << intensity << std::endl; */
                 double red   = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[0], 1./2.2));
                 double green = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[1], 1./2.2));
                 double blue  = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[2], 1./2.2));

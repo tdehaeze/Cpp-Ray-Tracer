@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath> 
 #include <cstring> // for memcpy()
+#include <iostream>
 
 class Vector {
 public:
@@ -22,6 +23,8 @@ public:
     Vector& operator+=(const Vector& a);
     Vector& operator-=(const Vector& a);
     bool operator==(const Vector& a) const;
+
+    friend std::ostream& operator<<(std::ostream &out, const Vector &v);
 
     double operator[](int i) const;
     double norm() const;
