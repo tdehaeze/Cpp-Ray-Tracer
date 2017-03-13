@@ -54,17 +54,14 @@ double Object::getDistance(const Ray rayon) const{
 
 Vector Object::getPointBeforeIntersect(Ray rayon) const{
     Vector point_before_intersect = *this->getIntersect(rayon);
-    /* std::cout << "point_intersect: " << point_before_intersect << std::endl; */
-
     Vector intersect_normal = *this->getNormal(rayon);
-
+    std::cout << intersect_normal << std::endl;
+    
     if (intersect_normal*rayon.getDirection() > 0) { /* we are "inside" and going outside */
         point_before_intersect -= 0.01*intersect_normal;
     } else { /* we are outside and comming inside */
         point_before_intersect += 0.01*intersect_normal;
     }
-
-    /* std::cout << "point_before_intersect: " << point_before_intersect << std::endl; */
 
     return point_before_intersect;
 }
@@ -109,7 +106,7 @@ double Object::getFirstPositive(const std::vector<double> t) const{
             return element;
         }
     }
-    return -INFINITY;
+    return -1;
 }
 
 

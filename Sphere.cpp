@@ -47,9 +47,9 @@ std::vector<double> Sphere::getIntersections(const Ray rayon) const{
 
     std::sort(t.begin(), t.end(), std::less<double>());
 
-    if (t.size() == 2) {
+    /* if (t.size() == 2) { */
         /* std::cout << "T0 = " << t[0] << "T1 = " << t[1] << std::endl; */
-    }
+    /* } */
 
     return t;
 }

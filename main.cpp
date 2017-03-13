@@ -8,16 +8,16 @@ Scene defineScene()
 
     /* double sphere_size = 10000; */
     /* double top         = 40; */
-    double bottom      = 10;
+    /* double bottom      = 10; */
     /* double right       = 30; */
     /* double left        = 30; */
-    double front       = 180;
+    /* double front       = 180; */
     /* double back        = 10; */
 
-    double radius           = 10;
-    double from_bottom      = 0;
-    double from_front       = 10;
-    double horizontal_right = 0;
+    /* double radius           = 10; */
+    /* double from_bottom      = 0; */
+    /* double from_front       = 10; */
+    /* double horizontal_right = 0; */
 
     Material* blue        = new Material(Vector(25,  25,  112));
     Material* red         = new Material(Vector(178, 34,  34));
@@ -25,8 +25,8 @@ Scene defineScene()
     Material* cyan        = new Material(Vector(0,   139, 139));
     Material* orange      = new Material(Vector(210, 105, 30));
     Material* grey        = new Material(Vector(119, 136, 153));
-    Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.);
-    Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3);
+    /* Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.); */
+    /* Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3); */
 
     /* 
      * droite -> (+, 0, 0)
@@ -36,7 +36,8 @@ Scene defineScene()
 
     Sphere * sphere_1 = new Sphere(Vector(-5, 0, 0), 7, red);
     Sphere * sphere_2 = new Sphere(Vector( 5, 0, 0), 7, red);
-    Union * union_1 = new Union(sphere_1, sphere_2);
+    /* Union * union_1 = new Union(sphere_1, sphere_2); */
+    Intersection * intersection_1 = new Intersection(sphere_1, sphere_2);
     /* Sphere * sphere_3 = new Sphere(Vector(3, 0, -7), 2, green); */
 
     Plan * plan_right = new Plan(Vector(30, 0, 0), Vector(-1, 0, 0), green);
@@ -55,7 +56,8 @@ Scene defineScene()
     /* Sphere * sphere_back   = new Sphere(Vector(0, 0,sphere_size+back+Z_CAMERA), sphere_size, grey); */
     /* Sphere * sphere_front  = new Sphere(Vector(0, 0,-(sphere_size+front-Z_CAMERA)), sphere_size, grey); */
 
-    scene.addObject(union_1);
+    scene.addObject(intersection_1);
+    /* scene.addObject(union_1); */
 
     /* scene.addObject(sphere_1); */
     /* scene.addObject(sphere_2); */
@@ -118,9 +120,12 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int
             Ray ray_to_light = Ray(intersect_object->getPointBeforeIntersect(ray), light);
             Object* intersect_object_light = scene.getIntersectedObject(ray_to_light);
 
+            if(intersect_object_light == 0){
+                std::cout << "OK" << std::endl;
+            }
+
             if (intersect_object_light == 0 || (intersect_object_light != 0 && intersect_object_light->getDistance(ray_to_light) > (*intersect_object->getIntersect(ray) - light.getOrigin()).norm())) {
                 double intensity = intersect_object->getIntensity(ray, light);
-                /* std::cout << "intensity : " << intensity << std::endl; */
                 double red   = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[0], 1./2.2));
                 double green = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[1], 1./2.2));
                 double blue  = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[2], 1./2.2));
@@ -156,8 +161,8 @@ int main()
 /* #pragma omp parallel for schedule(dynamic,1) */
 
     /* for each pixels */
-    for (int i = 0; i < H; i++) {
-        for (int j = 0; j < W; j++) {
+    for (int i = 0; i < W; i++) {
+        for (int j = 0; j < H; j++) {
             bounce = 0;
             refract = 0;
             ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360))));

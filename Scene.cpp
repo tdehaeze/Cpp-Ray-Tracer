@@ -22,11 +22,16 @@ Object* Scene::getIntersectedObject(Ray rayon) const{
 
     for(auto const& object: this->getObjects()) {
         double t = object->getDistance(rayon);
+        /* std::cout << "distance : " << t << std::endl; */
         if (t > 0 && ( t < t_min || t_min < 0 )) {
             closest_object = object;
             t_min = t;
         }
     }
+
+    /* if (closest_object != 0){ */
+    /*     std::cout << "found CLOSEST OBJECT" << std::endl; */
+    /* } */
 
     return closest_object;
 }
