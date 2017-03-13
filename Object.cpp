@@ -36,6 +36,15 @@ Vector* Object::getIntersect(Ray rayon) const{
     }
 }
 
+double Object::getDistance(const Ray rayon) const{
+    std::vector<double> intersections = this->getIntersections(rayon);
+    if (intersections.size() > 0) {
+        return this->getFirstPositive(intersections);
+    } else {
+        return -1;
+    }
+}
+
 
 Vector Object::getPointBeforeIntersect(Ray rayon) const{
     Vector point_before_intersect = *this->getIntersect(rayon);
@@ -83,4 +92,13 @@ Ray Object::getRefractedRay(Ray rayon, double ind_before, double ind_after) cons
 
     return Ray(this->getPointAfterIntersect(rayon), refracted_direction);
 }
+
+double Object::getFirstPositive(const std::vector<double> t) const{
+    for(const double &element : t) {
+        if (element > 0)
+            return element;
+    }
+    return -INFINITY;
+}
+
 

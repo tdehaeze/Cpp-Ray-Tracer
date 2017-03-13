@@ -34,7 +34,7 @@ Scene defineScene()
      * avant -> (0, 0, -)
      * */
 
-    Sphere * sphere_1 = new Sphere(Vector(-10, 0, 7), 3, transparent);
+    Sphere * sphere_1 = new Sphere(Vector(-10, 0, 7), 3, red);
     /* Sphere * sphere_2 = new Sphere(Vector(0, 0, 0), 6, blue); */
     /* Sphere * sphere_3 = new Sphere(Vector(0, 0, 0), 6, blue); */
 
@@ -45,7 +45,7 @@ Scene defineScene()
     Plan * plan_front = new Plan(Vector(0, 0, 100), Vector(0, 0, -1), grey);
     Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), blue);
 
-    /* Cylindre * cylindre = new Cylindre(Vector(-10, 10, -10), Vector(0, -10, 0), 6, red); */
+    Cylindre * cylindre = new Cylindre(Vector(-10, 10, -10), Vector(0, -10, 0), 9, transparent);
 
     /* Sphere * sphere_left   = new Sphere(Vector(-(sphere_size+left), 0,0), sphere_size, red); */
     /* Sphere * sphere_right  = new Sphere(Vector(sphere_size+right, 0,0), sphere_size, green); */
@@ -65,7 +65,7 @@ Scene defineScene()
     scene.addObject(plan_back);
     scene.addObject(plan_front);
 
-    /* scene.addObject(cylindre); */
+    scene.addObject(cylindre);
 
     return scene;
 }

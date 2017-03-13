@@ -34,7 +34,7 @@ public:
 
 
     /* Sphere getSphere(Ray ray); */
-    Object* getCurrentObject(Vector position);
+    /* Object* getCurrentObject(Vector position); */
 
 protected:
     std::vector<Object*> objects;

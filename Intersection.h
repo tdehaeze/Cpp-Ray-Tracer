@@ -1,5 +1,5 @@
-#ifndef DEF_PLAN
-#define DEF_PLAN
+#ifndef DEF_INTERSECTION
+#define DEF_INTERSECTION
 
 #include <cmath>
 
@@ -8,17 +8,17 @@
 #include "Material.h"
 #include "Ray.h"
 
-class Plan : public Object {
+class Intersection : public Object {
 public:
     /* Constructeur */
-    Plan(Vector m_origin = Vector(0, 0, 0), Vector m_direction = Vector(0, 0, 0), Material* m_material = NULL);
+    Intersection(Object* m_object1 = 0, Object* m_object2 = 0);
 
     /* Destructeur */
-    ~Plan();
+    ~Intersection();
 
     /* Getter */
-    Vector getOrigin() const;
-    Vector getDirection() const;
+    Object* getObject1() const;
+    Object* getObject2() const;
 
     /* Masquage */
     std::vector<double> getIntersections(const Ray rayon) const;
@@ -26,8 +26,13 @@ public:
     bool isInside(const Vector point) const;
 
 protected:
-    Vector origin;
-    Vector direction;
+    Object* getIntersectedObject(const Ray rayon) const;
+
+    Object* object1;
+    Object* object2;
 };
 
 #endif
+
+
+

@@ -15,14 +15,13 @@ double Sphere::getRadius() const{
     return radius;
 }
 
-Vector Sphere::getCenter() const{
-    return origin;
-}
-
 Vector* Sphere::getNormal(Ray rayon) const{
-    double t = getDistance(rayon);
-    if (t > 0) {
-        Vector* intersect_normal = new Vector(rayon.getOrigin() + t*rayon.getDirection() - origin);
+    std::vector<double> t = this->getIntersections(rayon);
+
+    double first_positive = this->getFirstPositive(t);
+
+    if (first_positive > 0) {
+        Vector* intersect_normal = new Vector(rayon.getOrigin() + first_positive*rayon.getDirection() - this->getOrigin());
         intersect_normal->Normalize();
         return intersect_normal;
     } else {
@@ -30,8 +29,8 @@ Vector* Sphere::getNormal(Ray rayon) const{
     }
 }
 
-double Sphere::getDistance(Ray rayon) const{
-    double t;
+std::vector<double> Sphere::getIntersections(const Ray rayon) const{
+    std::vector<double> t;
 
     Vector CO = rayon.getOrigin() - this->getOrigin();
 
@@ -41,34 +40,22 @@ double Sphere::getDistance(Ray rayon) const{
 
     double delta = b*b - 4*a*c;
 
-    double t1 = 0;
-    double t2 = 0;
-
-    if (delta < 0) {
-        t = -1;
-    } else if (delta == 0){
-        t1 = -b/(2*a);
-        if (t1 > 0) {
-            t = t1;
-        } else {
-            t = -1;
-        }
-    } else {
-        t1 = (-b+std::sqrt(delta))/(2*a);
-        t2 = (-b-std::sqrt(delta))/(2*a);
-        if (t1 > 0 && t2 > 0) {
-            t = std::min(t1, t2);
-        } else if (t1*t2 < 0) {
-            t = std::max(t1, t2);
-        } else {
-            t = -1;
-        }
+    if (delta == 0) {
+        t.push_back(-b/(2*a));
+    } else if (delta > 0){
+        t.push_back(-b+std::sqrt(delta));
+        t.push_back(-b-std::sqrt(delta));
     }
+
+    std::sort(t.begin(), t.end(), std::greater<int>());
 
     return t;
 }
 
+/* 
+ * TODO : vérifier le bon fonctionnement
+ * */
 bool Sphere::isInside(Vector point) const{
-    return (std::pow(point.getX()-origin.getX(), 2) + std::pow(point.getX()-origin.getX(),2) + std::pow(point.getX()-origin.getX(), 2) < radius);
+    return (std::pow(point.getX()-this->getOrigin().getX(), 2) + std::pow(point.getY()-this->getOrigin().getY(),2) + std::pow(point.getZ()-this->getOrigin().getZ(), 2) < std::pow(radius,2));
 }
 

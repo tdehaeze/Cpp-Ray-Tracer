@@ -25,18 +25,16 @@ public:
     Vector getNormalA() const;
     Vector getNormalB() const;
 
-    double getDistanceToPlanA(const Ray rayon) const;
-    double getDistanceToPlanB(const Ray rayon) const;
-    double getDistanceToCylindre(const Ray rayon) const;
-    std::pair<double, double> getT1T2(const Ray rayon) const;
-
     /* Masquage */
-    Vector getCenter() const;
-    double getDistance(const Ray rayon) const;
+    std::vector<double> getIntersections(const Ray rayon) const;
     Vector* getNormal(const Ray rayon) const;
     bool isInside(const Vector point) const;
 
 protected:
+    double getDistanceToPlanA(const Ray rayon) const;
+    double getDistanceToPlanB(const Ray rayon) const;
+    double getDistanceToCylindre(const Ray rayon) const;
+    std::vector<double> getIntersectionsToCylindre(const Ray rayon) const;
     Vector a;
     Vector b;
     double radius;

@@ -21,8 +21,7 @@ public:
     double getRadius() const;
 
     /* Masquage */
-    Vector getCenter() const;
-    double getDistance(const Ray rayon) const;
+    std::vector<double> getIntersections(const Ray rayon) const;
     Vector* getNormal(const Ray rayon) const;
     bool isInside(const Vector point) const;
 

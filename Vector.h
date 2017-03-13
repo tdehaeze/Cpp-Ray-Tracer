@@ -21,6 +21,7 @@ public:
     /* Opérateurs racourcis */
     Vector& operator+=(const Vector& a);
     Vector& operator-=(const Vector& a);
+    bool operator==(const Vector& a) const;
 
     double operator[](int i) const;
     double norm() const;

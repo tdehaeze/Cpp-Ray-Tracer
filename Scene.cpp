@@ -49,23 +49,23 @@ Vector* Scene::getNormal(Ray rayon) const{
     }
 }
 
-Object* Scene::getCurrentObject(Vector position)
-{
-    Object* object = 0;
-    double min_distance = -1;
+/* Object* Scene::getCurrentObject(Vector position) */
+/* { */
+/*     Object* object = 0; */
+/*     double min_distance = -1; */
 
-    for(int i = 0; i < static_cast<int>( objects.size() ); i++) {
-        if (objects[i]->isInside(position)) {
-            double distance_to_center = (position - objects[i]->getCenter()).norm();
-            if (min_distance == -1 || distance_to_center < min_distance) {
-                min_distance = distance_to_center;
-                object = objects[i];
-            }
-        }
-    }
+/*     for(int i = 0; i < static_cast<int>( objects.size() ); i++) { */
+/*         if (objects[i]->isInside(position)) { */
+/*             double distance_to_center = (position - objects[i]->getCenter()).norm(); */
+/*             if (min_distance == -1 || distance_to_center < min_distance) { */
+/*                 min_distance = distance_to_center; */
+/*                 object = objects[i]; */
+/*             } */
+/*         } */
+/*     } */
 
-    return object;
-}
+/*     return object; */
+/* } */
 
 
 /* void Scene::addSphere(const Sphere sphere){ */
