@@ -40,11 +40,12 @@ Scene defineScene()
     /* Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), blue); */
     /* scene.addObject(plan_front); */
 
-    Cylindre * cylindre = new Cylindre(Vector(-10, 10, -10), Vector(0, -10, 0), 9, red);
-    scene.addObject(cylindre);
+    Cylindre * cylindre = new Cylindre(Vector(10, 10, -20), Vector(0, -10, 0), 9, red);
     Sphere * sphere_inside = new Sphere(Vector(0, -10, 0), 8, red);
-    Intersection * cylindre_creux = new Intersection(cylindre, sphere_inside);
-    scene.addObject(cylindre_creux);
+    Difference * cylindre_creux = new Difference(cylindre, sphere_inside);
+    Sphere * sphere_outside = new Sphere(Vector(0, -10, 0), 9, red);
+    Intersection * bol = new Intersection(cylindre_creux, sphere_outside);
+    scene.addObject(bol);
 
     /* scene.addObject(intersection_1); */
     /* scene.addObject(union_1); */
