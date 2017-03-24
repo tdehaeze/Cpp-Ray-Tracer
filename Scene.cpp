@@ -16,7 +16,7 @@ void Scene::addObject(Object* object){
     objects.push_back(object);
 }
 
-Object* Scene::getIntersectedObject(Ray rayon) const{
+Inter* Scene::getInter(Ray rayon) const{
     Object* closest_object = 0;
     double t_min = -1;
 
@@ -30,28 +30,26 @@ Object* Scene::getIntersectedObject(Ray rayon) const{
         }
     }
 
-    /* if (closest_object != 0){ */
-    /*     if (DEBUG) std::cout << "found CLOSEST OBJECT" << std::endl; */
-    /* } */
+    Inter* inter = new Inter(closest_object, rayon, t_min);
 
-    return closest_object;
+    return inter;
 }
 
-Vector* Scene::getIntersect(Ray rayon) const{
-    Object* closest_object = this->getIntersectedObject(rayon);
-    if (closest_object == 0) {
-        return 0;
-    } else {
-        return closest_object->getIntersect(rayon);
-    }
-}
+/* Vector* Scene::getIntersect(Ray rayon) const{ */
+/*     Object* closest_object = this->getIntersectedObject(rayon); */
+/*     if (closest_object == 0) { */
+/*         return 0; */
+/*     } else { */
+/*         return closest_object->getIntersect(rayon); */
+/*     } */
+/* } */
 
-Vector* Scene::getNormal(Ray rayon) const{
-    Object* closest_object = this->getIntersectedObject(rayon);
-    if (closest_object == 0) {
-        return 0;
-    } else {
-        return closest_object->getNormal(rayon);
-    }
-}
+/* Vector* Scene::getNormal(Ray rayon) const{ */
+/*     Object* closest_object = this->getIntersectedObject(rayon); */
+/*     if (closest_object == 0) { */
+/*         return 0; */
+/*     } else { */
+/*         return closest_object->getNormal(rayon); */
+/*     } */
+/* } */
 

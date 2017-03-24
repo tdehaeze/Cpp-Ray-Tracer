@@ -34,11 +34,11 @@ double Object::getIntensity(Ray rayon, Light light) const{
 Vector* Object::getIntersect(Ray rayon) const{
     double t = this->getDistance(rayon);
     if (t > 0) {
-        /* if (DEBUG) std::cout << "t" << t << std::endl; */
-        /* if (DEBUG) std::cout << "Origin of Ray : " << rayon.getOrigin() << std::endl; */
-        /* if (DEBUG) std::cout << "Direction of Ray : " << rayon.getDirection() << std::endl; */
+        if (DEBUG) std::cout << "t" << t << std::endl;
+        if (DEBUG) std::cout << "Origin of Ray : " << rayon.getOrigin() << std::endl;
+        if (DEBUG) std::cout << "Direction of Ray : " << rayon.getDirection() << std::endl;
         Vector* intersect_point = new Vector(rayon.getOrigin() + t*rayon.getDirection());
-        /* if (DEBUG) std::cout << "intersect_point" << *intersect_point << std::endl; */
+        if (DEBUG) std::cout << "intersect_point" << *intersect_point << std::endl;
         return intersect_point;
     } else {
         return 0;
@@ -57,11 +57,8 @@ double Object::getDistance(const Ray rayon) const{
 
 
 Vector Object::getPointBeforeIntersect(Ray rayon) const{
-    if (DEBUG) std::cout << "lapin 0" << std::endl;
     Vector point_before_intersect = *this->getIntersect(rayon);
-    if (DEBUG) std::cout << "lapin 1" << std::endl;
     Vector intersect_normal = *this->getNormal(rayon);
-    if (DEBUG) std::cout << "lapin 2" << std::endl;
     
     if (intersect_normal*rayon.getDirection() > 0) { /* we are "inside" and going outside */
         point_before_intersect -= 0.01*intersect_normal;

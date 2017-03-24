@@ -24,15 +24,16 @@
 #include "Cylindre.h"
 
 #include "Scene.h"
+#include "Inter.h"
 
 #include "Union.h"
 #include "Intersection.h"
 #include "Difference.h"
 
 
-std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract);
+std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double indice);
 
-std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract);
+std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract, double indice);
 
 /* Scene defineScene(); */
 

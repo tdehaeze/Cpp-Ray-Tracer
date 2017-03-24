@@ -2,6 +2,7 @@
 #define DEF_OBJECT
 
 #include <iostream>
+
 #include "Vector.h"
 #include "Ray.h"
 #include "Material.h"

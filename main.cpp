@@ -70,49 +70,43 @@ Scene defineScene()
     return scene;
 }
 
-std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract) {
+std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract, double current_indice) {
     std::vector<double> colors {0, 0, 0};
     *bounce += 1;
     /* if (DEBUG) std::cout << "reflexion on reflective object" << std::endl; */
     Ray reflected_ray = object->getReflectedRay(ray);
-    colors = getColor(reflected_ray, light, scene, bounce, refract);
+    colors = getColor(reflected_ray, light, scene, bounce, refract, current_indice);
     return colors;
 }
 
-std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract) {
-    if (DEBUG) std::cout << "OK -2" << std::endl;
-    Object* intersect_object = scene.getIntersectedObject(ray);
-    if (DEBUG) std::cout << "OK -1" << std::endl;
+std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double current_indice) {
+    /* Object* intersect_object = scene.getInter(ray); */
+    Inter* inter = scene.getInter(ray);
     std::vector<double> colors {0, 0, 0};
-    if (DEBUG) std::cout << "OK 0" << std::endl;
-    if (intersect_object != 0 && *bounce < 2 && *refract < 5) {
-        if (DEBUG) std::cout << "OK 1" << std::endl;
-        if (intersect_object->getMaterial()->getReflectivity() != 0.) { /* Mirroir Object */
-            colors = getColorMirroir(intersect_object, ray, light, scene, bounce, refract);
-        } else if (intersect_object->getMaterial()->getTransparency() != 0.) { /* Transparent Object */
-            double current_indice = 1.;
+    if (inter->getObject() != 0 && *bounce < 2 && *refract < 5) {
+        if (inter->getObject()->getMaterial()->getReflectivity() != 0.) { /* Mirroir Object */
+            colors = getColorMirroir(inter->getObject(), ray, light, scene, bounce, refract, current_indice);
+        } else if (inter->getObject()->getMaterial()->getTransparency() != 0.) { /* Transparent Object */
             double next_indice = 1.;
 
-            if ( intersect_object->isInside(intersect_object->getPointBeforeIntersect(ray)) ) { /* going outside object */
-                /* if (DEBUG) std::cout << "going outside" << std::endl; */
-                current_indice = intersect_object->getMaterial()->getIndice();
+            if ( inter->getObject()->isInside(inter->getPointBeforeIntersect()) ) { /* going outside object */
+                next_indice = 1.0;
             } else { /* going inside object */
-                /* if (DEBUG) std::cout << "going inside" << std::endl; */
-                next_indice = intersect_object->getMaterial()->getIndice();
+                next_indice = inter->getObject()->getMaterial()->getIndice();
             }
 
             double ind_frac = current_indice/next_indice;
-            Vector intersect_normal = *intersect_object->getNormal(ray);
+            Vector intersect_normal = inter->getNormal();
             double prod_scalaire = std::abs(intersect_normal*ray.getDirection());
             double frac = 1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire);
 
             if (frac < 0) { /* only reflexion */
-                colors = getColorMirroir(intersect_object, ray, light, scene, bounce, refract);
+                colors = getColorMirroir(inter->getObject(), ray, light, scene, bounce, refract, current_indice);
             } else { /* only refraction */
                 *refract += 1;
                 /* if (DEBUG) std::cout << "refraction" << std::endl; */
-                Ray refracted_ray = intersect_object->getRefractedRay(ray, current_indice, next_indice);
-                colors = getColor(refracted_ray, light, scene, bounce, refract);
+                Ray refracted_ray = inter->getObject()->getRefractedRay(ray, current_indice, next_indice);
+                colors = getColor(refracted_ray, light, scene, bounce, refract, next_indice);
             }
 
         } else { /* Normal Object */
@@ -159,19 +153,16 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int
             /* } */
             /* couleur_d = (1./nbDiffusion)*color; */
 
-            if (DEBUG) std::cout << "OK 2" << std::endl;
-            Ray ray_to_light = Ray(intersect_object->getPointBeforeIntersect(ray), light);
-            if (DEBUG) std::cout << "OK 3" << std::endl;
-            Object* intersect_object_light = scene.getIntersectedObject(ray_to_light);
-            if (DEBUG) std::cout << "OK 4" << std::endl;
+            Ray ray_to_light = Ray(inter->getPointBeforeIntersect(), light);
+            /* Object* intersect_object_light = scene.getIntersectedObject(ray_to_light); */
+            Inter* inter_light = scene.getInter(ray_to_light);
 
-            if (intersect_object_light == 0 || (intersect_object_light != 0 && intersect_object_light->getDistance(ray_to_light) > (*intersect_object->getIntersect(ray) - light.getOrigin()).norm())) {
-                if (DEBUG) std::cout << "OK 5" << std::endl;
-                double intensity = intersect_object->getIntensity(ray, light);
+            if (inter_light->getObject() == 0 || (inter_light->getObject() != 0 && inter_light->getObject()->getDistance(ray_to_light) > (*inter->getObject()->getIntersect(ray) - light.getOrigin()).norm())) {
+                double intensity = inter->getObject()->getIntensity(ray, light);
                 if (DEBUG) std::cout << "Intensity : " << intensity << std::endl;
-                double red   = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[0], 1./2.2));
-                double green = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[1], 1./2.2));
-                double blue  = std::min(255.0, std::pow(intensity*intersect_object->getMaterial()->getColor()[2], 1./2.2));
+                double red   = std::min(255.0, std::pow(intensity*inter->getObject()->getMaterial()->getColor()[0], 1./2.2));
+                double green = std::min(255.0, std::pow(intensity*inter->getObject()->getMaterial()->getColor()[1], 1./2.2));
+                double blue  = std::min(255.0, std::pow(intensity*inter->getObject()->getMaterial()->getColor()[2], 1./2.2));
                 colors = {red, green, blue};
             }
         }
@@ -198,6 +189,7 @@ int main()
 
     int bounce = 0;
     int refract = 0;
+    double current_indice = 1.0;
 
     auto start = std::chrono::steady_clock::now();
 
@@ -209,7 +201,7 @@ int main()
             bounce = 0;
             refract = 0;
             ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360))));
-            std::vector<double> colors = getColor(ray, light, scene, &bounce, &refract);
+            std::vector<double> colors = getColor(ray, light, scene, &bounce, &refract, current_indice);
             pixels[H*i+j]       = colors[0];
             pixels[H*i+j+H*W]   = colors[1];
             pixels[H*i+j+2*H*W] = colors[2];

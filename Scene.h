@@ -10,7 +10,8 @@
 #include "Sphere.h"
 #include "Plan.h"
 #include "Ray.h"
-#include "global.h"
+#include "Global.h"
+#include "Inter.h"
 
 class Scene {
 public:
@@ -25,12 +26,12 @@ public:
 
     void addObject(Object* object);
 
-    Object* getIntersectedObject(const Ray rayon) const;
+    Inter* getInter(const Ray rayon) const;
 
-    Vector* getIntersect(const Ray rayon) const;
-    Vector* getNormal(const Ray rayon) const;
-    Vector* getReflectedRay(const Ray rayon) const;
-    Vector* getRefractedRay(const Ray rayon) const;
+    /* Vector* getIntersect(const Ray rayon) const; */
+    /* Vector* getNormal(const Ray rayon) const; */
+    /* Vector* getReflectedRay(const Ray rayon) const; */
+    /* Vector* getRefractedRay(const Ray rayon) const; */
 
 protected:
     std::vector<Object*> objects;
