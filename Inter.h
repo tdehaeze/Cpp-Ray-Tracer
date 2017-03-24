@@ -2,6 +2,7 @@
 #define DEF_INTER
 
 #include <iostream>
+#include <cmath>
 
 #include "Vector.h"
 #include "Object.h"
@@ -11,7 +12,7 @@
 class Inter {
 public:
     /* Constructeur */
-    Inter(Object* m_object, Ray m_ray, double m_distance);
+    Inter(Object* m_object, Ray m_ray, double m_distance, double m_n_before);
 
     /* Destructeur */
     virtual ~Inter();
@@ -23,6 +24,14 @@ public:
     Vector getPointIntersect() const;
     Vector getPointBeforeIntersect() const;
     Vector getPointAfterIntersect() const;
+    double getIndiceBefore() const;
+    double getIndiceAfter() const;
+
+
+    Ray getRandomRay() const;
+    Ray getReflectedRay(const Ray rayon) const;
+    Ray getRefractedRay(const Ray rayon) const;
+    double getIntensity(const Light light) const;
 
 protected:
     Object* object;
@@ -31,6 +40,8 @@ protected:
     Vector point_intersect;
     Vector point_before;
     Vector point_after;
+    double n_before;
+    double n_after;
 };
 
 #endif

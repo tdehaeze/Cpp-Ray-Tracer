@@ -3,7 +3,7 @@
 
 #include "Vector.h"
 #include "Light.h"
-#include "global.h"
+#include "Global.h"
 
 class Ray {
 public:
@@ -15,9 +15,6 @@ public:
     /* getters */
     Vector getOrigin() const;
     Vector getDirection() const;
-
-    /* double getDistanceToSphere(const Sphere sphere); */
-    /* double getIntensity(Object* object, Light* light) const; */
 
 protected:
     Vector origin;

@@ -41,7 +41,7 @@ std::vector<double> Difference::getIntersections(const Ray rayon) const{
 
 Object* Difference::getIntersectedObject(const Ray rayon) const{
     std::vector<double> intersections = this->getIntersections(rayon);
-    double first_intersection = getFirstPositive(intersections);
+    double first_intersection = help_fun::getFirstPositive(intersections);
 
     if (first_intersection >= 0) {
         return this->getObject1();

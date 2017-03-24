@@ -16,7 +16,7 @@ void Scene::addObject(Object* object){
     objects.push_back(object);
 }
 
-Inter* Scene::getInter(Ray rayon) const{
+Inter* Scene::getInter(Ray rayon, double indice) const{
     Object* closest_object = 0;
     double t_min = -1;
 
@@ -30,7 +30,7 @@ Inter* Scene::getInter(Ray rayon) const{
         }
     }
 
-    Inter* inter = new Inter(closest_object, rayon, t_min);
+    Inter* inter = new Inter(closest_object, rayon, t_min, indice);
 
     return inter;
 }

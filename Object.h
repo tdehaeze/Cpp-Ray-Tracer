@@ -6,6 +6,7 @@
 #include "Vector.h"
 #include "Ray.h"
 #include "Material.h"
+
 #include "Global.h"
 #include "helping_functions.h"
 
@@ -28,15 +29,6 @@ public:
     /* Autres méthodes */
     virtual double getDistance(const Ray rayon) const;
     virtual Vector* getIntersect(const Ray rayon) const;
-    virtual Ray getRandomRay(const Ray rayon) const;
-    virtual Ray getReflectedRay(const Ray rayon) const;
-    virtual Ray getRefractedRay(const Ray rayon, double ind_before, double ind_after) const;
-    virtual Vector getPointBeforeIntersect(const Ray rayon) const;
-    virtual Vector getPointAfterIntersect(const Ray rayon) const;
-    virtual double getIntensity(const Ray rayon, const Light light) const;
-
-    virtual Vector randomCos(const Vector normal) const;
-
 
 protected:
     Material* material;

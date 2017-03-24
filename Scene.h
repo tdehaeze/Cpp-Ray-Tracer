@@ -26,7 +26,7 @@ public:
 
     void addObject(Object* object);
 
-    Inter* getInter(const Ray rayon) const;
+    Inter* getInter(const Ray rayon, double indice) const;
 
     /* Vector* getIntersect(const Ray rayon) const; */
     /* Vector* getNormal(const Ray rayon) const; */

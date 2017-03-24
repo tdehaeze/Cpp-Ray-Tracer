@@ -41,7 +41,7 @@ std::vector<double> Intersection::getIntersections(const Ray rayon) const{
 
 Object* Intersection::getIntersectedObject(const Ray rayon) const{
     std::vector<double> intersections = this->getIntersections(rayon);
-    double first_intersection = getFirstPositive(intersections);
+    double first_intersection = help_fun::getFirstPositive(intersections);
 
     if (first_intersection >= 0) {
         Vector point_before = rayon.getOrigin()+( first_intersection+0.01 )*rayon.getDirection();

@@ -44,7 +44,7 @@ double Cylindre::getDistanceToPlanA(const Ray rayon) const{
 
     Vector normal_a = this->getNormalA();
 
-    if (!double_equals(rayon.getDirection()*normal_a, 0)) {
+    if (!help_fun::double_equals(rayon.getDirection()*normal_a, 0)) {
         t = ((this->getA()-rayon.getOrigin())*normal_a)/(rayon.getDirection()*normal_a);
     } else {
         t = -1;
@@ -58,7 +58,7 @@ double Cylindre::getDistanceToPlanB(const Ray rayon) const{
 
     Vector normal_b = this->getNormalB();
 
-    if (!double_equals(rayon.getDirection()*normal_b, 0)) {
+    if (!help_fun::double_equals(rayon.getDirection()*normal_b, 0)) {
         t = ((this->getB()-rayon.getOrigin())*normal_b)/(rayon.getDirection()*normal_b);
     } else {
         t = -1;
@@ -68,7 +68,7 @@ double Cylindre::getDistanceToPlanB(const Ray rayon) const{
 }
 
 double Cylindre::getDistanceToCylindre(const Ray rayon) const{
-    double first_positive = getFirstPositive(this->getIntersectionsToCylindre(rayon));
+    double first_positive = help_fun::getFirstPositive(this->getIntersectionsToCylindre(rayon));
     if (first_positive > 0) {
         return first_positive;
     } else {
@@ -120,7 +120,7 @@ std::vector<double> Cylindre::getIntersections(const Ray rayon) const{
 
     /* If the ray crosses the infinit cylinder */
     if (t_cylindre.size() > 1) {
-        if (double_equals(rayon.getDirection()*this->getDirection(), 0)) {
+        if (help_fun::double_equals(rayon.getDirection()*this->getDirection(), 0)) {
             /* the ray doesn't cross the 2 planes */
             if (DEBUG) std::cout << "ray doesn't cross planes" << std::endl;
             t = t_cylindre;
@@ -151,7 +151,7 @@ std::vector<double> Cylindre::getIntersections(const Ray rayon) const{
 
             if (DEBUG) std::cout << "crosses the sphere" << std::endl;
         }
-    } else if (double_equals((rayon.getDirection()^this->getDirection()).norm(), 0)) {
+    } else if (help_fun::double_equals((rayon.getDirection()^this->getDirection()).norm(), 0)) {
         /* the ray has the same direction has the cylinder */
         /* double s1 = this->getDistanceToPlanA(rayon); */
         /* double s2 = this->getDistanceToPlanB(rayon); */
@@ -170,16 +170,16 @@ Vector* Cylindre::getNormal(const Ray rayon) const{
 
     double t = this->getDistance(rayon);
 
-    if (double_equals(t, this->getDistanceToCylindre(rayon))) {
+    if (help_fun::double_equals(t, this->getDistanceToCylindre(rayon))) {
         /* std::cout << "cylindre" << std::endl; */
         Vector P = rayon.getOrigin() + t*rayon.getDirection();
         Vector D = this->getA() + ( (P - this->getA())*this->getDirection() )*this->getDirection();
         normal = new Vector(P-D);
         normal->Normalize();
-    } else if (double_equals(t, this->getDistanceToPlanA(rayon))) {
+    } else if (help_fun::double_equals(t, this->getDistanceToPlanA(rayon))) {
         /* std::cout << "planA" << std::endl; */
         normal = new Vector(this->getNormalA());
-    } else if (double_equals(t, this->getDistanceToPlanB(rayon))) {
+    } else if (help_fun::double_equals(t, this->getDistanceToPlanB(rayon))) {
         /* std::cout << "planB" << std::endl; */
         normal = new Vector(this->getNormalB());
     } else {
