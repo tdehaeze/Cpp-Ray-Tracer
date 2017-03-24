@@ -79,7 +79,7 @@ double Inter::getIntensity(Light light) const{
     Vector l = Ray(this->getPointBeforeIntersect(), light).getDirection();
     Vector n = this->getNormal();
 
-    double d = (this->getPointIntersect() - light.getOrigin()).norm();
+    /* double d = (this->getPointIntersect() - light.getOrigin()).norm(); */
 
     /* intensity = std::abs(l*n)*light.getIntensity()/(d*d); */
     /* intensity = std::max(0.,l*n)*light.getIntensity()/(d*d); */

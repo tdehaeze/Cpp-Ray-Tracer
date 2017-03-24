@@ -8,6 +8,7 @@
 #include <iostream>
 #include <omp.h>
 #include <chrono>
+#include <stdlib.h>
 
 #include "CImg/CImg.h"
 

@@ -1,19 +1,15 @@
 #include "main.h"
 
 #define Z_CAMERA 60
-#define ALPHA_DIFF 0.2
-#define NB_RAY 100
+#define ALPHA_DIFF 1
+#define NB_RAY 1
 #define MAX_BOUNCE 2
 #define MAX_REFRACT 5
+#define NB_ANTI_ALIASING 20
 
 std::default_random_engine engine;
 std::uniform_real_distribution <double> distrib(0,1);
-
-double fresnel_T(Vector u, Vector normal, double n_before, double n_after){
-    double k0 = std::pow(n_before-n_after, 2)/std::pow(n_before+n_after, 2);
-
-    return k0 + (1-k0)*std::pow(1-u*normal, 5);
-}
+std::normal_distribution<double> distribution(0.0,0.5);
 
 Scene defineScene()
 {
@@ -88,20 +84,26 @@ Vector getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, do
         } else if (inter->getObject()->getMaterial()->getTransparency() != 0.) {
             /* Transparent Object */
             double next_indice = inter->getIndiceAfter();
-            double ind_frac = current_indice/next_indice;
-            Vector intersect_normal = inter->getNormal();
-            double prod_scalaire = std::abs(intersect_normal*ray.getDirection());
-            double frac = 1-ind_frac*ind_frac*(1 - prod_scalaire*prod_scalaire);
+            double k0 = std::pow(current_indice-next_indice, 2)/std::pow(current_indice+next_indice, 2);
+            Vector i;
+            if (current_indice < next_indice) {
+                i = -ray.getDirection();
+            } else {
+                i = inter->getRefractedRay(ray).getDirection();
+            }
+            double T = k0 + (1-k0)*std::pow(1-i*inter->getNormal(), 5);
 
-            if (frac < 0) { /* only reflexion */
-                *bounce += 1;
-                Ray reflected_ray = inter->getReflectedRay(ray);
-                colors = getColor(reflected_ray, light, scene, bounce, refract, current_indice);
-            } else { /* only refraction */
+            if (distrib(engine) < T) {
+                /* transmision */
                 *refract += 1;
                 /* if (DEBUG) std::cout << "refraction" << std::endl; */
                 Ray refracted_ray = inter->getRefractedRay(ray);
                 colors = getColor(refracted_ray, light, scene, bounce, refract, next_indice);
+            } else {
+                /* reflexion */
+                *bounce += 1;
+                Ray reflected_ray = inter->getReflectedRay(ray);
+                colors = getColor(reflected_ray, light, scene, bounce, refract, current_indice);
             }
         } else {
             /* Normal Object */
@@ -141,6 +143,7 @@ Vector getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, do
     return colors;
 }
 
+
 int main()
 {
     const int W = 1024; /* width: number of pixels */
@@ -149,10 +152,7 @@ int main()
     const Vector center = Vector(0, 0, Z_CAMERA); /* point of view: start point for the ray, we look at the negative z */
     const int fov = 40; /* field of view */
 
-    Ray ray = Ray (center, Vector(0, 0, 1)); /* initialize the ray */
-
     Light light = Light(Vector(-20, -20, 50), 1000000); /* setup the light source position and luminosity */
-
 
     Scene scene = defineScene();
 
@@ -169,23 +169,36 @@ int main()
     /* for each pixels */
     /* for (int i = 0; i < W; i++) { */
     /*     for (int j = 0; j < H; j++) { */
-    for (int i = 1; i < W; i++) {
-        for (int j = 1; j < H ; j++) {
-            ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360))));
+    for (int i = W-200; i < W; i++) {
+        for (int j = H-200; j < H ; j++) {
+            /* ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360)))); */
 
-            Vector colors = Vector();
-            for (int k = 0; k < NB_RAY; ++k) {
-                bounce = 0;
-                refract = 0;
+            Vector final_color = Vector(0, 0, 0);
 
-                colors += getColor(ray, light, scene, &bounce, &refract, current_indice);
+            for (int l = 0; l < NB_ANTI_ALIASING; ++l) {
+                double x = distribution(engine);
+                double y = distribution(engine);
+                Ray ray = Ray(center, Vector(j+x-W/2, i+y-H/2, -H/(2*std::tan(2*M_PI*fov/2/360))));
+
+                /* Ray ray = Ray(center, (j-W/2+u-0.5)*right + (i-H/2+v-0.5)*up + depth*direction); */
+
+                Vector colors = Vector();
+                for (int k = 0; k < NB_RAY; ++k) {
+                    bounce = 0;
+                    refract = 0;
+                    colors += getColor(ray, light, scene, &bounce, &refract, current_indice);
+                }
+
+                colors = (1.0/(NB_RAY))*colors;
+
+                final_color += colors;
             }
 
-            colors = (1.0/(NB_RAY))*colors;
+            final_color = (1.0/(NB_ANTI_ALIASING))*final_color;
 
-            double red   = std::min(255.0, 255.0*std::pow(colors[0], 1./2.2));
-            double green = std::min(255.0, 255.0*std::pow(colors[1], 1./2.2));
-            double blue  = std::min(255.0, 255.0*std::pow(colors[2], 1./2.2));
+            double red   = std::min(255.0, 255.0*std::pow(final_color[0], 1./2.2));
+            double green = std::min(255.0, 255.0*std::pow(final_color[1], 1./2.2));
+            double blue  = std::min(255.0, 255.0*std::pow(final_color[2], 1./2.2));
 
             pixels[H*i+j]       = red;
             pixels[H*i+j+H*W]   = green;
