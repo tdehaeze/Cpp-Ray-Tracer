@@ -1,6 +1,16 @@
 #include "main.h"
 
 #define Z_CAMERA 60
+#define nbDiffusion 10
+
+std::default_random_engine engine;
+std::uniform_real_distribution <double> distrib(0,1);
+
+double fresnel_T(Vector u, Vector normal, double n_before, double n_after){
+    double k0 = std::pow(n_before-n_after, 2)/std::pow(n_before+n_after, 2);
+
+    return k0 + (1-k0)*std::pow(1-u*normal, 5);
+}
 
 Scene defineScene()
 {
@@ -12,7 +22,7 @@ Scene defineScene()
     Material* cyan        = new Material(Vector(0,   139, 139));
     Material* orange      = new Material(Vector(210, 105, 30));
     Material* grey        = new Material(Vector(119, 136, 153));
-    /* Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.); */
+    Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.);
     /* Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3); */
 
     /* 
@@ -27,23 +37,23 @@ Scene defineScene()
     /* Intersection * intersection_1 = new Intersection(sphere_1, sphere_2); */
     /* Sphere * sphere_3 = new Sphere(Vector(3, 0, -7), 2, green); */
 
-    /* Plan * plan_right = new Plan(Vector(30, 0, 0), Vector(-1, 0, 0), green); */
-    /* scene.addObject(plan_left); */
-    /* Plan * plan_left = new Plan(Vector(-30, 0, 0), Vector(1, 0, 0), red); */
-    /* scene.addObject(plan_right); */
+    Plan * plan_right = new Plan(Vector(30, 0, 0), Vector(-1, 0, 0), green);
+    scene.addObject(plan_right);
+    Plan * plan_left = new Plan(Vector(-30, 0, 0), Vector(1, 0, 0), red);
+    scene.addObject(plan_left);
     Plan * plan_bottom = new Plan(Vector(0, 30, 0), Vector(0, -1, 0), cyan);
     scene.addObject(plan_bottom);
-    /* Plan * plan_top = new Plan(Vector(0, -30, 0), Vector(0, 1, 0), orange); */
-    /* scene.addObject(plan_top); */
-    /* Plan * plan_front = new Plan(Vector(0, 0, 100), Vector(0, 0, -1), grey); */
-    /* scene.addObject(plan_back); */
-    /* Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), blue); */
-    /* scene.addObject(plan_front); */
+    Plan * plan_top = new Plan(Vector(0, -30, 0), Vector(0, 1, 0), orange);
+    scene.addObject(plan_top);
+    Plan * plan_front = new Plan(Vector(0, 0, 100), Vector(0, 0, -1), grey);
+    scene.addObject(plan_front);
+    Plan * plan_back = new Plan(Vector(0, 0, -80), Vector(0, 0, 1), blue);
+    scene.addObject(plan_back);
 
-    Cylindre * cylindre = new Cylindre(Vector(10, 10, -20), Vector(0, -10, 0), 9, red);
-    Sphere * sphere_inside = new Sphere(Vector(0, -10, 0), 8, red);
+    Cylindre * cylindre = new Cylindre(Vector(10, 10, -20), Vector(0, -10, 0), 9, mirroir);
+    Sphere * sphere_inside = new Sphere(Vector(0, -10, 0), 8, mirroir);
     Difference * cylindre_creux = new Difference(cylindre, sphere_inside);
-    Sphere * sphere_outside = new Sphere(Vector(0, -10, 0), 9, red);
+    Sphere * sphere_outside = new Sphere(Vector(0, -10, 0), 9, mirroir);
     Intersection * bol = new Intersection(cylindre_creux, sphere_outside);
     scene.addObject(bol);
 
@@ -106,6 +116,49 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int
             }
 
         } else { /* Normal Object */
+
+            /* Vector color; */
+            /* for(int i=0; i<nbDiffusion; i++){ */
+            /*     double random_alpha = distrib( engine); */
+            /*     double dist; */
+
+            /*     if(random_alpha<alphaDiff){ */
+
+            /*         double rayonLum = listeSpheres[0]->get_rayon(); */
+
+            /*         Vector N2 = P - L; */
+            /*         N2.Normalize(); */
+
+            /*         Vector Xrand = rayonLum*random_cos(N2) + L; */
+            /*         Vector w_0 = Xrand - P; */
+            /*         dist=w_0.squaredNorm(); */
+            /*         w_0.Normalize(); */
+
+            /*         Vector N3 = Xrand - L; */
+            /*         N3.Normalize(); */
+
+            /*         double pdf=dot(N2,N3); */
+
+            /*         Vector epsilon=(sqrt(dist)/1000)*w_0; */
+            /*         double tShadow; */
+            /*         int idShadow; */
+            /*         int shadow=1; */
+            /*         Vector normaleInutile; */
+
+            /*         if(get_intersect(P+epsilon,w_0,&idShadow,&tShadow,&normaleInutile)){ */
+            /*             if(sqrt(dist)-2*rayonLum>tShadow){ */
+            /*                 shadow=0; */
+            /*             } */
+            /*         } */
+            /*         color = color + shadow*(Intensity*dot(N,w_0)*dot(N3,-1*w_0)/(dist*pdf))*couleur_ini; */
+            /*     } */
+            /*     else{ */
+            /*         Vector v=random_cos(N); */
+            /*         color = color + (2./(M_PI))*prod(get_color(v,P+(t_min/1000)*v,L,iteration+1),couleur_ini); */
+            /*     }//le 2. permet d'avoir un peu plus de diffusion pour les petites spheres */
+            /* } */
+            /* couleur_d = (1./nbDiffusion)*color; */
+
             if (DEBUG) std::cout << "OK 2" << std::endl;
             Ray ray_to_light = Ray(intersect_object->getPointBeforeIntersect(ray), light);
             if (DEBUG) std::cout << "OK 3" << std::endl;

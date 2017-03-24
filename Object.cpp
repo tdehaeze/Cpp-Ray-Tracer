@@ -1,5 +1,8 @@
 #include "Object.h"
 
+extern std::default_random_engine engine;
+extern std::uniform_real_distribution <double> distrib;
+
 Object::Object(Material* m_material)
     : material(m_material) {}
 
@@ -103,5 +106,26 @@ Ray Object::getRefractedRay(Ray rayon, double ind_before, double ind_after) cons
     return Ray(this->getPointAfterIntersect(rayon), refracted_direction);
 }
 
+Vector Object::randomCos(const Vector normal) const{
+    double u = distrib(engine);
+    double v = distrib(engine);
 
+    double x = cos(2*M_PI*u)*sqrt(1-v);
+    double y = sin(2*M_PI*u)*sqrt(1-v);
+    double z = sqrt(v);
+
+    Vector r1(distrib(engine), distrib(engine), distrib(engine));
+    r1.Normalize();
+
+    Vector tangent1 = normal^r1;
+    Vector tangent2 = normal^tangent1;
+
+    return x*tangent1 + y*tangent2 + z*normal;
+}
+
+Ray Object::getRandomRay(const Ray rayon) const{
+    Vector normal = *this->getNormal(rayon);
+    Ray random_ray = Ray(this->getPointBeforeIntersect(rayon), this->randomCos(normal));
+    return random_ray;
+}
 

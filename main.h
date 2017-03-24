@@ -11,7 +11,7 @@
 
 #include "CImg/CImg.h"
 
-#include "global.h"
+#include "Global.h"
 #include "helping_functions.h"
 
 #include "Vector.h"
@@ -28,6 +28,7 @@
 #include "Union.h"
 #include "Intersection.h"
 #include "Difference.h"
+
 
 std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract);
 
