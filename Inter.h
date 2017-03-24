@@ -8,11 +8,12 @@
 #include "Object.h"
 #include "Ray.h"
 #include "Material.h"
+#include "Scene.h"
 
 class Inter {
 public:
     /* Constructeur */
-    Inter(Object* m_object, Ray m_ray, double m_distance, double m_n_before);
+    Inter(Scene scene, Ray m_ray, double m_n_before);
 
     /* Destructeur */
     virtual ~Inter();

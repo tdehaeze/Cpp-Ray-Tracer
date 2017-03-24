@@ -80,9 +80,10 @@ std::vector<double> getColorMirroir(Inter* inter, Ray ray, Light light, Scene sc
 }
 
 std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double current_indice) {
-    /* Object* intersect_object = scene.getInter(ray); */
-    Inter* inter = scene.getInter(ray, current_indice);
     std::vector<double> colors {0, 0, 0};
+
+    Inter* inter = new Inter(scene, ray, current_indice);
+
     if (inter->getObject() != 0 && *bounce < 2 && *refract < 5) {
         if (inter->getObject()->getMaterial()->getReflectivity() != 0.) { /* Mirroir Object */
             colors = getColorMirroir(inter, ray, light, scene, bounce, refract, current_indice);
@@ -147,8 +148,8 @@ std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int
             /* couleur_d = (1./nbDiffusion)*color; */
 
             Ray ray_to_light = Ray(inter->getPointBeforeIntersect(), light);
-            /* Object* intersect_object_light = scene.getIntersectedObject(ray_to_light); */
-            Inter* inter_light = scene.getInter(ray_to_light, current_indice);
+
+            Inter* inter_light = new Inter(scene, ray_to_light, current_indice);
 
             if (inter_light->getObject() == 0 || (inter_light->getObject() != 0 && inter_light->getObject()->getDistance(ray_to_light) > (*inter->getObject()->getIntersect(ray) - light.getOrigin()).norm())) {
                 double intensity = inter->getIntensity(light);
