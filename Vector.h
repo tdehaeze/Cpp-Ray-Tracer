@@ -5,7 +5,8 @@
 #include <cmath> 
 #include <cstring> // for memcpy()
 #include <iostream>
-#include "global.h"
+
+#include "Global.h"
 
 class Vector {
 public:
@@ -30,6 +31,8 @@ public:
     double operator[](int i) const;
     double norm() const;
     double squaredNorm() const;
+
+    Vector elementWizeProduct(const Vector& a) const;
 
     void Normalize();
 

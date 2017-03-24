@@ -30,9 +30,7 @@
 #include "Intersection.h"
 #include "Difference.h"
 
-std::vector<double> getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double indice);
-
-std::vector<double> getColorMirroir(Object* object, Ray ray, Light light, Scene scene, int* bounce, int* refract, double indice);
+Vector getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double indice);
 
 #endif
 

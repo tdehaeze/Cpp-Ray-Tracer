@@ -31,9 +31,9 @@ Vector help_fun::randomCos(const Vector normal){
     Vector r1(distrib(engine), distrib(engine), distrib(engine));
     r1.Normalize();
 
-    Vector tangent1 = normal^r1;
-    Vector tangent2 = normal^tangent1;
+    Vector u1 = normal^r1;
+    Vector u2 = normal^u1;
 
-    return x*tangent1 + y*tangent2 + z*normal;
+    return x*u1 + y*u2 + z*normal;
 }
 

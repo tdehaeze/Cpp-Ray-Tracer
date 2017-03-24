@@ -38,6 +38,13 @@ double Vector::getZ() const{
     return xyz[2];
 }
 
+Vector Vector::elementWizeProduct(const Vector& a) const{
+    double x = this->getX()*a.getX();
+    double y = this->getY()*a.getY();
+    double z = this->getZ()*a.getZ();
+    return Vector(x, y, z);
+}
+
 Vector operator+(const Vector& a,const Vector& b){
     return Vector(a.getX()+b.getX() , a.getY()+b.getY() , a.getZ()+b.getZ());
 }

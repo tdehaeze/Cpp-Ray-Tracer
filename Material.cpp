@@ -3,7 +3,7 @@
 Material::Material(Vector m_color, double m_transparency, double m_reflectivity, double m_indice)
     : color(m_color), transparency(m_transparency), reflectivity(m_reflectivity), indice(m_indice)
 {
-    m_color.Normalize();
+    this->color.Normalize();
 }
 
 Vector Material::getColor() const{
