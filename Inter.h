@@ -29,9 +29,10 @@ public:
     double getIndiceAfter() const;
 
 
-    Ray getRandomRay() const;
     Ray getReflectedRay(const Ray rayon) const;
     Ray getRefractedRay(const Ray rayon) const;
+    Ray getRandomRay() const;
+
     double getIntensity(const Light light) const;
 
 protected:

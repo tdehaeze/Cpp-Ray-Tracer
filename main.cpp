@@ -1,15 +1,17 @@
 #include "main.h"
 
 #define Z_CAMERA 60
-#define ALPHA_DIFF 1
-#define NB_RAY 1
-#define MAX_BOUNCE 2
+#define ALPHA_DIFF 0.2
+#define NB_RAY 20
+#define MAX_BOUNCE 5
 #define MAX_REFRACT 5
-#define NB_ANTI_ALIASING 20
+#define NB_ANTI_ALIASING 10
+#define ANTI_ALIASING true
+#define CST_FRESNEL true
 
 std::default_random_engine engine;
 std::uniform_real_distribution <double> distrib(0,1);
-std::normal_distribution<double> distribution(0.0,0.5);
+std::normal_distribution<double> distribution(-0.5,0.5);
 
 Scene defineScene()
 {
@@ -22,7 +24,7 @@ Scene defineScene()
     Material* orange      = new Material(Vector(210, 105, 30));
     Material* grey        = new Material(Vector(130, 130, 130));
     /* Material* mirroir     = new Material(Vector(1.,  1.,  1.), 0., 1.); */
-    /* Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.3); */
+    /* Material* transparent = new Material(Vector(1.,  1.,  1.), 1., 0., 1.1); */
 
     /* 
      * droite -> (+, 0, 0)
@@ -32,6 +34,10 @@ Scene defineScene()
 
     Sphere * sphere_1 = new Sphere(Vector(20, 20, -30), 10, grey);
     scene.addObject(sphere_1);
+    Sphere * sphere_2 = new Sphere(Vector(20, 20, -50), 5, grey);
+    scene.addObject(sphere_2);
+    Sphere * sphere_3 = new Sphere(Vector(20, 5, -10), 5, blue);
+    scene.addObject(sphere_3);
     /* Sphere * sphere_2 = new Sphere(Vector(0, 0, -39), 40, transparent); */
     /* Union * union_1 = new Union(sphere_1, sphere_2); */
     /* Intersection * intersection_1 = new Intersection(sphere_1, sphere_2); */
@@ -70,40 +76,46 @@ Scene defineScene()
     return scene;
 }
 
-Vector getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double current_indice) {
+double getReflectivity(double current_indice, Inter* inter, Ray ray){
+    double R;
+    double next_indice = inter->getIndiceAfter();
+    /* std::cout << "next_indice : " << next_indice << std::endl; */
+    /* std::cout << "current_indice : " << current_indice << std::endl; */
+
+    if (CST_FRESNEL) {
+        R = 0.2;
+    } else {
+        double k0 = std::pow((current_indice-next_indice)/(current_indice+next_indice), 2);
+        Vector i;
+        if (next_indice > current_indice) {
+            i = -ray.getDirection();
+        } else {
+            i = inter->getRefractedRay(ray).getDirection();
+        }
+        R = k0 + (1-k0)*std::pow(1-std::abs(i*inter->getNormal()), 5);
+    }
+    return R;
+}
+
+Vector getColor(Ray ray, Light light, Scene scene, int bounce, int refract, double current_indice) {
     Vector colors = Vector();
 
     Inter* inter = new Inter(scene, ray, current_indice);
 
-    if (inter->getObject() != 0 && *bounce < MAX_BOUNCE && *refract < MAX_REFRACT) {
+    if (inter->getObject() != 0 && bounce < MAX_BOUNCE && refract < MAX_REFRACT) {
         if (inter->getObject()->getMaterial()->getReflectivity() != 0.) {
             /* Mirroir Object */
-            *bounce += 1;
-            Ray reflected_ray = inter->getReflectedRay(ray);
-            colors = getColor(reflected_ray, light, scene, bounce, refract, current_indice);
+            colors = getColor(inter->getReflectedRay(ray), light, scene, bounce+1, refract, current_indice);
         } else if (inter->getObject()->getMaterial()->getTransparency() != 0.) {
             /* Transparent Object */
-            double next_indice = inter->getIndiceAfter();
-            double k0 = std::pow(current_indice-next_indice, 2)/std::pow(current_indice+next_indice, 2);
-            Vector i;
-            if (current_indice < next_indice) {
-                i = -ray.getDirection();
-            } else {
-                i = inter->getRefractedRay(ray).getDirection();
-            }
-            double T = k0 + (1-k0)*std::pow(1-i*inter->getNormal(), 5);
+            double R = getReflectivity(current_indice, inter, ray);
 
-            if (distrib(engine) < T) {
-                /* transmision */
-                *refract += 1;
-                /* if (DEBUG) std::cout << "refraction" << std::endl; */
-                Ray refracted_ray = inter->getRefractedRay(ray);
-                colors = getColor(refracted_ray, light, scene, bounce, refract, next_indice);
-            } else {
+            if (distrib(engine) < R) {
                 /* reflexion */
-                *bounce += 1;
-                Ray reflected_ray = inter->getReflectedRay(ray);
-                colors = getColor(reflected_ray, light, scene, bounce, refract, current_indice);
+                colors = getColor(inter->getReflectedRay(ray), light, scene, bounce+1, refract, current_indice);
+            } else {
+                /* transmision */
+                colors = getColor(inter->getRefractedRay(ray), light, scene, bounce, refract+1, inter->getIndiceAfter());
             }
         } else {
             /* Normal Object */
@@ -114,20 +126,19 @@ Vector getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, do
                 Inter* inter_light = new Inter(scene, ray_to_light, current_indice);
 
                 if (inter_light->getObject() == 0 || (inter_light->getObject() != 0 && inter_light->getObject()->getDistance(ray_to_light) > (*inter->getObject()->getIntersect(ray) - light.getOrigin()).norm())) {
+                    /* If there is no object or if the object is after the light */
                     double intensity = inter->getIntensity(light);
                     if (DEBUG) std::cout << "Intensity : " << intensity << std::endl;
                     colors = intensity*inter->getObject()->getMaterial()->getColor();
                 }
             } else {
                 /* random ray */
-                *bounce += 1;
-                Ray reflected_ray = Ray(inter->getPointBeforeIntersect(), help_fun::randomCos(inter->getNormal()));
-                Vector color_object = inter->getObject()->getMaterial()->getColor();
+                /* Vector color_object = inter->getObject()->getMaterial()->getColor(); */
                 /* colors = color_object + (2./(M_PI))*color_object.elementWizeProduct(getColor(reflected_ray, light, scene, bounce, refract, current_indice)); */
-                colors = (2./(M_PI))*color_object.elementWizeProduct(getColor(reflected_ray, light, scene, bounce, refract, current_indice));
+                colors = (2./(M_PI))*inter->getObject()->getMaterial()->getColor().elementWizeProduct(getColor(inter->getRandomRay(), light, scene, bounce+1, refract, current_indice));
             }
         }
-    } else if (*bounce == MAX_BOUNCE) {
+    } else if (bounce == MAX_BOUNCE) {
         /* si on a atteind le max de bounce => on prend un rayon vers la lumière */
         Ray ray_to_light = Ray(inter->getPointBeforeIntersect(), light);
 
@@ -158,43 +169,49 @@ int main()
 
     std::vector<unsigned char> pixels(3*H*W,0); /* define the array of pixels */
 
-    int bounce = 0;
-    int refract = 0;
     double current_indice = 1.0;
 
     auto start = std::chrono::steady_clock::now();
 
-/* #pragma omp parallel for schedule(dynamic,1) */
+#pragma omp parallel for schedule(dynamic,1)
 
     /* for each pixels */
     /* for (int i = 0; i < W; i++) { */
     /*     for (int j = 0; j < H; j++) { */
-    for (int i = W-200; i < W; i++) {
-        for (int j = H-200; j < H ; j++) {
-            /* ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360)))); */
-
+    for (int i = W-400; i < W; i++) {
+        for (int j = H-400; j < H; j++) {
             Vector final_color = Vector(0, 0, 0);
+            if (ANTI_ALIASING) {
+                for (int l = 0; l < NB_ANTI_ALIASING; ++l) {
+                    double x = distribution(engine);
+                    double y = distribution(engine);
+                    Ray ray = Ray(center, Vector(j+x-W/2, i+y-H/2, -H/(2*std::tan(2*M_PI*fov/2/360))));
 
-            for (int l = 0; l < NB_ANTI_ALIASING; ++l) {
-                double x = distribution(engine);
-                double y = distribution(engine);
-                Ray ray = Ray(center, Vector(j+x-W/2, i+y-H/2, -H/(2*std::tan(2*M_PI*fov/2/360))));
+                    /* Ray ray = Ray(center, (j-W/2+u-0.5)*right + (i-H/2+v-0.5)*up + depth*direction); */
 
-                /* Ray ray = Ray(center, (j-W/2+u-0.5)*right + (i-H/2+v-0.5)*up + depth*direction); */
+                    Vector colors = Vector();
+                    for (int k = 0; k < NB_RAY; ++k) {
+                        colors += getColor(ray, light, scene, 0, 0, current_indice);
+                    }
+
+                    colors = (1.0/(NB_RAY))*colors;
+
+                    final_color += colors;
+                }
+
+                final_color = (1.0/(NB_ANTI_ALIASING))*final_color;
+            } else {
+                Ray ray = Ray(center, Vector(j-W/2+0.5, i-H/2+0.5, -H/(2*std::tan(2*M_PI*fov/2/360))));
 
                 Vector colors = Vector();
                 for (int k = 0; k < NB_RAY; ++k) {
-                    bounce = 0;
-                    refract = 0;
-                    colors += getColor(ray, light, scene, &bounce, &refract, current_indice);
+                    colors += getColor(ray, light, scene, 0, 0, current_indice);
                 }
-
                 colors = (1.0/(NB_RAY))*colors;
 
                 final_color += colors;
             }
 
-            final_color = (1.0/(NB_ANTI_ALIASING))*final_color;
 
             double red   = std::min(255.0, 255.0*std::pow(final_color[0], 1./2.2));
             double green = std::min(255.0, 255.0*std::pow(final_color[1], 1./2.2));

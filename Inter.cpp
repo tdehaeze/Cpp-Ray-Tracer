@@ -108,12 +108,10 @@ Ray Inter::getRefractedRay(Ray rayon) const{
     Vector refracted_direction = ind_frac*i - (-ind_frac*std::abs(n*i) + std::sqrt(1-ind_frac*ind_frac*(1 - (n*i)*(n*i))))*n;
     refracted_direction.Normalize();
 
-    return Ray(this->point_before, refracted_direction);
+    return Ray(this->point_after, refracted_direction);
 }
 
-
 Ray Inter::getRandomRay() const{
-    Ray random_ray = Ray(this->point_before, help_fun::randomCos(this->normal));
-    return random_ray;
+    return Ray(this->getPointBeforeIntersect(), help_fun::randomCos(this->getNormal()));
 }
 
