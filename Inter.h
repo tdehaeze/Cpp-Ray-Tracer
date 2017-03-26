@@ -33,7 +33,7 @@ public:
     Ray getRefractedRay(const Ray rayon) const;
     Ray getRandomRay() const;
 
-    double getIntensity(const Light light) const;
+    double getIntensity(const Ray ray_to_light) const;
 
 protected:
     Object* object;

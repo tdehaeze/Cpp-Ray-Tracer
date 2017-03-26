@@ -23,6 +23,7 @@
 #include "Sphere.h"
 #include "Plan.h"
 #include "Cylindre.h"
+#include "Cube.h"
 
 #include "Scene.h"
 #include "Inter.h"
@@ -31,7 +32,7 @@
 #include "Intersection.h"
 #include "Difference.h"
 
-Vector getColor(Ray ray, Light light, Scene scene, int* bounce, int* refract, double indice);
+Vector getColor(Ray ray, Scene scene, int bounce, int refract, double indice);
 
 #endif
 

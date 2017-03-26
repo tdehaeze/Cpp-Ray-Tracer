@@ -2,11 +2,13 @@
 #define DEF_SPHERE
 
 #include <cmath>
+#include <random>
 
 #include "Object.h"
 #include "Vector.h"
 #include "Material.h"
 #include "Ray.h"
+
 #include "Global.h"
 #include "helping_functions.h"
 
@@ -26,6 +28,7 @@ public:
     std::vector<double> getIntersections(const Ray rayon) const;
     Vector* getNormal(const Ray rayon) const;
     bool isInside(const Vector point) const;
+    Ray getRandomRayToObject(Vector intersection) const;
 
 protected:
     Vector origin;
@@ -33,3 +36,4 @@ protected:
 };
 
 #endif
+

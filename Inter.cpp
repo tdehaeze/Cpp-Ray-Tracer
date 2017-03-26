@@ -73,13 +73,14 @@ double Inter::getIndiceAfter() const{
 }
 
 
-double Inter::getIntensity(Light light) const{
+double Inter::getIntensity(Ray ray_to_light) const{
     double intensity;
 
-    Vector l = Ray(this->getPointBeforeIntersect(), light).getDirection();
+    Vector l = ray_to_light.getDirection();
     Vector n = this->getNormal();
 
     /* double d = (this->getPointIntersect() - light.getOrigin()).norm(); */
+    /* double d = this->getDistance(); */
 
     /* intensity = std::abs(l*n)*light.getIntensity()/(d*d); */
     /* intensity = std::max(0.,l*n)*light.getIntensity()/(d*d); */

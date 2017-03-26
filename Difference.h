@@ -7,7 +7,8 @@
 #include "Vector.h"
 #include "Material.h"
 #include "Ray.h"
-#include "global.h"
+
+#include "Global.h"
 #include "helping_functions.h"
 
 class Difference : public Object {
@@ -26,6 +27,7 @@ public:
     std::vector<double> getIntersections(const Ray rayon) const;
     Vector* getNormal(const Ray rayon) const;
     bool isInside(const Vector point) const;
+    Ray getRandomRayToObject(Vector intersection) const;
 
 protected:
     Object* getIntersectedObject(const Ray rayon) const;

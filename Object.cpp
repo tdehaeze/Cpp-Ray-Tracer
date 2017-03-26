@@ -11,6 +11,16 @@ Material* Object::getMaterial() const{
     return material;
 }
 
+double Object::getDistance(const Ray rayon) const{
+    std::vector<double> intersections = this->getIntersections(rayon);
+    if (DEBUG) std::cout << "après get intersections" << std::endl;
+    if (intersections.size() > 0) {
+        return help_fun::getFirstPositive(intersections);
+    } else {
+        return -1;
+    }
+}
+
 Vector* Object::getIntersect(Ray rayon) const{
     double t = this->getDistance(rayon);
     if (t > 0) {
@@ -22,16 +32,6 @@ Vector* Object::getIntersect(Ray rayon) const{
         return intersect_point;
     } else {
         return 0;
-    }
-}
-
-double Object::getDistance(const Ray rayon) const{
-    std::vector<double> intersections = this->getIntersections(rayon);
-    if (DEBUG) std::cout << "après get intersections" << std::endl;
-    if (intersections.size() > 0) {
-        return help_fun::getFirstPositive(intersections);
-    } else {
-        return -1;
     }
 }
 

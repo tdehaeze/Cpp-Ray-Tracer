@@ -4,12 +4,13 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <random>
+#include <iterator>
 
 #include "Vector.h"
 #include "Object.h"
-#include "Sphere.h"
-#include "Plan.h"
 #include "Ray.h"
+
 #include "Global.h"
 
 class Scene {
@@ -25,8 +26,13 @@ public:
 
     void addObject(Object* object);
 
+    std::vector<Object*> getEmissiveObjects() const;
+    Object* getRandomEmissiveObject() const;
+
+
 protected:
     std::vector<Object*> objects;
+    std::vector<Object*> emissive_objects;
 };
 
 #endif

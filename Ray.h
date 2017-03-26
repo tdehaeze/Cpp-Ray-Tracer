@@ -9,7 +9,6 @@ class Ray {
 public:
     /* constructor */
     Ray(Vector m_origin, Vector m_direction);
-    Ray(Vector m_origin, Light light);
     /* Ray(int i, int j, int W, int H, int fov, Vector center); */
 
     /* getters */

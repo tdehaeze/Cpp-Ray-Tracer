@@ -86,6 +86,6 @@ Vector& Vector::operator-=(const Vector& a){
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector& v){  
-    return os << "X: " << v.getX() << "Y: " << v.getY() << "Z: " << v.getZ();
+    return os << "\t X: " << v.getX() << "\t Y: " << v.getY() << "\t Z: " << v.getZ();
 }
 

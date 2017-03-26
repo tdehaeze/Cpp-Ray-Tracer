@@ -5,7 +5,7 @@ extern std::uniform_real_distribution <double> distrib;
 
 double help_fun::getFirstPositive(const std::vector<double> t){
     for(const double &element : t) {
-        if (element > 0) {
+        if (element > 0.) {
             return element;
         }
     }

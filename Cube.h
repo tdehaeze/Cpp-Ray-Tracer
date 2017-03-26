@@ -1,27 +1,25 @@
-#ifndef DEF_INTERSECTION
-#define DEF_INTERSECTION
+#ifndef DEF_CUBE
+#define DEF_CUBE
 
 #include <cmath>
+#include <random>
 
 #include "Object.h"
 #include "Vector.h"
 #include "Material.h"
 #include "Ray.h"
+#include "Plan.h"
 
 #include "Global.h"
 #include "helping_functions.h"
 
-class Intersection : public Object {
+class Cube : public Object {
 public:
     /* Constructeur */
-    Intersection(Object* m_object1 = 0, Object* m_object2 = 0);
+    Cube(Vector m_point, Vector m_dir1, Vector m_dir2, Vector m_dir3, Material* m_material);
 
     /* Destructeur */
-    ~Intersection();
-
-    /* Getter */
-    Object* getObject1() const;
-    Object* getObject2() const;
+    ~Cube();
 
     /* Masquage */
     std::vector<double> getIntersections(const Ray rayon) const;
@@ -30,13 +28,18 @@ public:
     Ray getRandomRayToObject(Vector intersection) const;
 
 protected:
-    Object* getIntersectedObject(const Ray rayon) const;
-
-    Object* object1;
-    Object* object2;
+    std::vector<Plan> planes;
+    Vector point;
+    Vector dir1;
+    Vector dir2;
+    Vector dir3;
+    /* Plan plan1; */
+    /* Plan plan1_bis; */
+    /* Plan plan2; */
+    /* Plan plan2_bis; */
+    /* Plan plan3; */
+    /* Plan plan3_bis; */
 };
 
 #endif
-
-
 

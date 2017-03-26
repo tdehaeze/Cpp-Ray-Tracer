@@ -208,3 +208,8 @@ bool Cylindre::isInside(const Vector point) const{
     return is_inside;
 }
 
+Ray Cylindre::getRandomRayToObject(Vector intersection) const{
+    return Ray(intersection, (this->getA() + this->getB())/2 - intersection);
+}
+
+

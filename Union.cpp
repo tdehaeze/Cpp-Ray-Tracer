@@ -70,3 +70,7 @@ bool Union::isInside(const Vector point) const{
     return (this->getObject1()->isInside(point) || this->getObject2()->isInside(point));
 }
 
+Ray Union::getRandomRayToObject(Vector intersection) const{
+    return this->getObject1()->getRandomRayToObject(intersection);
+}
+
