@@ -23,7 +23,7 @@ Inter::Inter(Scene scene, Ray m_ray, double m_n_before)
 
         if (closest_object != 0) {
             this->point_intersect = m_ray.getOrigin() + t_min*m_ray.getDirection();
-            this->normal = *closest_object->getNormal(m_ray);
+            this->normal = closest_object->getNormal(m_ray);
             if (this->normal*m_ray.getDirection() > 0) { /* we are "inside" and going outside */
                 this->point_before = this->point_intersect - 0.01*this->normal;
                 this->point_after = this->point_intersect + 0.01*this->normal;

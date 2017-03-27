@@ -165,8 +165,8 @@ std::vector<double> Cylindre::getIntersections(const Ray rayon) const{
     return t;
 }
 
-Vector* Cylindre::getNormal(const Ray rayon) const{
-    Vector* normal = 0;
+Vector Cylindre::getNormal(const Ray rayon) const{
+    Vector normal = Vector(0, 0, 0);
 
     double t = this->getDistance(rayon);
 
@@ -174,20 +174,20 @@ Vector* Cylindre::getNormal(const Ray rayon) const{
         /* std::cout << "cylindre" << std::endl; */
         Vector P = rayon.getOrigin() + t*rayon.getDirection();
         Vector D = this->getA() + ( (P - this->getA())*this->getDirection() )*this->getDirection();
-        normal = new Vector(P-D);
-        normal->Normalize();
+        normal = Vector(P-D);
+        normal.Normalize();
     } else if (help_fun::double_equals(t, this->getDistanceToPlanA(rayon))) {
         /* std::cout << "planA" << std::endl; */
-        normal = new Vector(this->getNormalA());
+        normal = Vector(this->getNormalA());
     } else if (help_fun::double_equals(t, this->getDistanceToPlanB(rayon))) {
         /* std::cout << "planB" << std::endl; */
-        normal = new Vector(this->getNormalB());
+        normal = Vector(this->getNormalB());
     } else {
         std::cout << "SHOULD NEVER GO HERE" << std::endl;
         Vector P = rayon.getOrigin() + t*rayon.getDirection();
         Vector D = this->getA() + ( (P - this->getA())*this->getDirection() )*this->getDirection();
-        normal = new Vector(P-D);
-        normal->Normalize();
+        normal = Vector(P-D);
+        normal.Normalize();
     }
     /* std::cout << "after" << std::endl; */
     return normal;

@@ -18,15 +18,15 @@ double Sphere::getRadius() const{
     return radius;
 }
 
-Vector* Sphere::getNormal(Ray rayon) const{
+Vector Sphere::getNormal(Ray rayon) const{
     double first_positive = help_fun::getFirstPositive(this->getIntersections(rayon));
 
     if (first_positive > 0) {
-        Vector* intersect_normal = new Vector(rayon.getOrigin() + first_positive*rayon.getDirection() - this->getOrigin());
-        intersect_normal->Normalize();
+        Vector intersect_normal = Vector(rayon.getOrigin() + first_positive*rayon.getDirection() - this->getOrigin());
+        intersect_normal.Normalize();
         return intersect_normal;
     } else {
-        return 0;
+        return Vector(0, 0, 0);
     }
 }
 

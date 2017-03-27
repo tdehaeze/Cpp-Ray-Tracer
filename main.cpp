@@ -60,7 +60,7 @@ Scene defineScene()
 
     /* Cube* cube_1 = new Cube(Vector(0, 30, -50), Vector(10, 0, 0), Vector(0, -20, 0), Vector(0, 0, 20), m_grey); */
     /* scene.addObject(cube_1); */
-    Cube* cube_2 = new Cube(Vector(-10, -30, -60), Vector(20, 0, 0), Vector(0, 1, 0), Vector(0, 0, 20), m_light);
+    Cube* cube_2 = new Cube(Vector(-10, -30, -60), Vector(2, 0, 0), Vector(0, 1, 0), Vector(0, 0, 2), m_light);
     scene.addObject(cube_2);
 
     /* Sphere* sphere_3 = new Sphere(Vector(20, 5, -10), 5, m_blue); */

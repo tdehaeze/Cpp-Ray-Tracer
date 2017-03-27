@@ -25,7 +25,7 @@ public:
 
     /* Masquage */
     std::vector<double> getIntersections(const Ray rayon) const;
-    Vector* getNormal(const Ray rayon) const;
+    Vector getNormal(const Ray rayon) const;
     bool isInside(const Vector point) const;
     Ray getRandomRayToObject(Vector intersection) const;
 

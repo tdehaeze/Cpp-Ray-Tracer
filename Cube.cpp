@@ -68,7 +68,7 @@ std::vector<double> Cube::getIntersections(const Ray rayon) const{
     return intersections;
 }
 
-Vector* Cube::getNormal(const Ray rayon) const{
+Vector Cube::getNormal(const Ray rayon) const{
     std::vector<double> intersections = this->getIntersections(rayon);
 
     if (intersections.size() > 0) {
@@ -83,7 +83,7 @@ Vector* Cube::getNormal(const Ray rayon) const{
 
     }
 
-    return new Vector(0, 0, 0);
+    return Vector(0, 0, 0);
 }
 
 bool Cube::isInside(const Vector point) const{

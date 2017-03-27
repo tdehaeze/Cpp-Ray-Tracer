@@ -19,10 +19,10 @@ Vector Plan::getDirection() const{
 }
 
 /* TODO */
-Vector* Plan::getNormal(Ray rayon) const{
-    Vector* normal = 0;
+Vector Plan::getNormal(Ray rayon) const{
+    Vector normal = Vector(0, 0, 0);
     if (rayon.getDirection()*this->direction != 0)
-        normal = new Vector(this->direction);
+        normal = Vector(this->direction);
     return normal;
 }
 

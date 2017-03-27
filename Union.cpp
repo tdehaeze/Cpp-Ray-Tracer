@@ -61,7 +61,7 @@ std::vector<double> Union::getIntersections(const Ray rayon) const{
     return t_tot;
 }
 
-Vector* Union::getNormal(const Ray rayon) const{
+Vector Union::getNormal(const Ray rayon) const{
     Object* intersect_object = this->getIntersectedObject(rayon);
     return intersect_object->getNormal(rayon);
 }

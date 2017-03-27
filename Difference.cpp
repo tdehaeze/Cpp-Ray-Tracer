@@ -50,7 +50,7 @@ Object* Difference::getIntersectedObject(const Ray rayon) const{
     }
 }
 
-Vector* Difference::getNormal(const Ray rayon) const{
+Vector Difference::getNormal(const Ray rayon) const{
     Object* intersect_object = this->getIntersectedObject(rayon);
     return intersect_object->getNormal(rayon);
 }
