@@ -3,7 +3,7 @@
 #define Z_CAMERA 60
 #define ALPHA_DIFF 0.2
 #define NB_RAY 1
-#define MAX_BOUNCE 5
+#define MAX_BOUNCE 0
 #define MAX_REFRACT 5
 #define NB_ANTI_ALIASING 10
 #define ANTI_ALIASING false
@@ -28,7 +28,7 @@ Scene defineScene()
     /* Types */
     Vector t_specular    = Vector(1., 0., 0.);
     Vector t_transparent = Vector(0., 1., 0.);
-    /* Vector t_mirroir     = Vector(0., 0., 1.); */
+    Vector t_mirroir     = Vector(0., 0., 1.);
 
     /* Materials */
     Material* m_blue   = new Material(c_blue,   t_specular);
@@ -38,6 +38,7 @@ Scene defineScene()
     Material* m_orange = new Material(c_orange, t_specular);
     Material* m_grey   = new Material(c_grey,   t_specular);
     Material* m_transparent   = new Material(c_grey,   t_transparent, 2.);
+    Material* m_mirroir   = new Material(c_grey,   t_mirroir, 2.);
 
     Material* m_light  = new Material(c_grey,   t_specular, 1., 10.);
 
@@ -47,19 +48,30 @@ Scene defineScene()
      * avant -> (0, 0, -)
      * */
 
-    Sphere* sphere_1 = new Sphere(Vector(-12, 20, -40), 10, m_red);
-    scene.addObject(sphere_1);
-    Sphere* sphere_5 = new Sphere(Vector(12, 10, -40), 10, m_transparent);
-    scene.addObject(sphere_5);
+    /* Sphere* sphere_1 = new Sphere(Vector(-12, 20, -40), 10, m_red); */
+    /* scene.addObject(sphere_1); */
+    /* Sphere* sphere_5 = new Sphere(Vector(12, 10, -40), 10, m_transparent); */
+    /* scene.addObject(sphere_5); */
     /* Sphere* sphere_2 = new Sphere(Vector(10, 0, 0), 3, m_light); */
     /* scene.addObject(sphere_2); */
+
     /* Sphere* sphere_3 = new Sphere(Vector(5, 27, -27), 3, m_orange); */
     /* scene.addObject(sphere_3); */
-    /* Sphere* sphere_4 = new Sphere(Vector(-5, 20, -40), 5, m_red); */
+    /* Sphere* sphere_4 = new Sphere(Vector(-5, 10, -40), 5, m_red); */
     /* scene.addObject(sphere_4); */
 
-    /* Cube* cube_1 = new Cube(Vector(0, 30, -50), Vector(10, 0, 0), Vector(0, -20, 0), Vector(0, 0, 20), m_grey); */
+    Sphere* sphere_6 = new Sphere(Vector(10, 15, -40), 10, m_red);
+    /* Sphere* sphere_7 = new Sphere(Vector(10, 5, -40), 10, m_mirroir); */
+    /* scene.addObject(sphere_6); */
+
+    Cube* cube_1 = new Cube(Vector(0, 35, -50), Vector(20, 0, 0), Vector(0, -20, 0), Vector(0, 0, 20), m_red);
     /* scene.addObject(cube_1); */
+
+    Difference * mirroir_convexe = new Difference(cube_1, sphere_6);
+    /* Difference * mirroir_convexe = new Difference(sphere_6, cube_1); */
+    /* Difference * mirroir_convexe = new Difference(sphere_6, sphere_7); */
+    scene.addObject(mirroir_convexe);
+
     Cube* cube_2 = new Cube(Vector(-10, -30, -60), Vector(2, 0, 0), Vector(0, 1, 0), Vector(0, 0, 2), m_light);
     scene.addObject(cube_2);
 

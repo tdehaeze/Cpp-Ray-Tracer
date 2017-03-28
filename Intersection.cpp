@@ -44,8 +44,8 @@ Object* Intersection::getIntersectedObject(const Ray rayon) const{
     double first_intersection = help_fun::getFirstPositive(intersections);
 
     if (first_intersection >= 0) {
-        Vector point_before = rayon.getOrigin()+( first_intersection+0.01 )*rayon.getDirection();
-        Vector point_after = rayon.getOrigin()+( first_intersection-0.01 )*rayon.getDirection();
+        Vector point_before = rayon.getOrigin()+( first_intersection+0.00001 )*rayon.getDirection();
+        Vector point_after = rayon.getOrigin()+( first_intersection-0.00001 )*rayon.getDirection();
 
         if (!this->getObject1()->isInside(point_before)) {
             return this->getObject1();

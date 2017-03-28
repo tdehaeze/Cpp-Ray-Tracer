@@ -20,18 +20,15 @@ Vector Plan::getDirection() const{
 
 /* TODO */
 Vector Plan::getNormal(Ray rayon) const{
-    Vector normal = Vector(0, 0, 0);
-    if (rayon.getDirection()*this->direction != 0)
-        normal = Vector(this->direction);
-    return normal;
+    return direction;
+    /* Vector normal = Vector(0, 0, 0); */
+    /* if (rayon.getDirection()*this->direction != 0) */
+    /*     normal = this->direction; */
+    /* return normal; */
 }
 
-/*
- * TODO: peut être faire en sorte de voir de quelle
- * côté on est par rapport à l'orientation de la normale
- * */
 bool Plan::isInside(Vector point) const{
-    return (-this->getDirection()*(point-this->getOrigin()));
+    return this->getDirection()*(point-this->getOrigin()) < 0;
 }
 
 /* TODO Mieux gérer le cas lorsqu'on est parrallèle */

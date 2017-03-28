@@ -10,7 +10,7 @@
 
 namespace help_fun {
     double getFirstPositive(const std::vector<double> t);
-    bool double_equals(double a, double b, double epsilon = 0.001);
+    bool double_equals(double a, double b, double epsilon = 0.00001);
     bool sort_ascending_order(double u, double v);
     Vector randomCos(const Vector normal);
 }
