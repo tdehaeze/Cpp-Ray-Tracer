@@ -2,8 +2,8 @@
 
 #define Z_CAMERA 60
 #define ALPHA_DIFF 0.2
-#define NB_RAY 1
-#define MAX_BOUNCE 0
+#define NB_RAY 10
+#define MAX_BOUNCE 5
 #define MAX_REFRACT 5
 #define NB_ANTI_ALIASING 10
 #define ANTI_ALIASING false
@@ -37,7 +37,9 @@ Scene defineScene()
     Material* m_cyan   = new Material(c_cyan,   t_specular);
     Material* m_orange = new Material(c_orange, t_specular);
     Material* m_grey   = new Material(c_grey,   t_specular);
-    Material* m_transparent   = new Material(c_grey,   t_transparent, 2.);
+    Material* m_transparent   = new Material(c_grey,   t_transparent, 1.3);
+    Material* m_air   = new Material(c_grey,   t_transparent, 1.);
+
     Material* m_mirroir   = new Material(c_grey,   t_mirroir, 2.);
 
     Material* m_light  = new Material(c_grey,   t_specular, 1., 10.);
@@ -60,23 +62,27 @@ Scene defineScene()
     /* Sphere* sphere_4 = new Sphere(Vector(-5, 10, -40), 5, m_red); */
     /* scene.addObject(sphere_4); */
 
-    Sphere* sphere_6 = new Sphere(Vector(10, 15, -40), 10, m_red);
-    /* Sphere* sphere_7 = new Sphere(Vector(10, 5, -40), 10, m_mirroir); */
+    /* Sphere* sphere_6 = new Sphere(Vector(10, 15, -40), 10, m_red); */
     /* scene.addObject(sphere_6); */
+    /* Sphere* sphere_7 = new Sphere(Vector(10, 5, -40), 10, m_mirroir); */
+    /* scene.addObject(sphere_7); */
 
-    Cube* cube_1 = new Cube(Vector(0, 35, -50), Vector(20, 0, 0), Vector(0, -20, 0), Vector(0, 0, 20), m_red);
+    /* Cube* cube_1 = new Cube(Vector(0, 35, -50), Vector(20, 0, 0), Vector(0, -20, 0), Vector(0, 0, 20), m_red); */
     /* scene.addObject(cube_1); */
 
-    Difference * mirroir_convexe = new Difference(cube_1, sphere_6);
+    /* Difference * mirroir_convexe = new Difference(cube_1, sphere_6); */
     /* Difference * mirroir_convexe = new Difference(sphere_6, cube_1); */
     /* Difference * mirroir_convexe = new Difference(sphere_6, sphere_7); */
-    scene.addObject(mirroir_convexe);
+    /* scene.addObject(mirroir_convexe); */
 
     Cube* cube_2 = new Cube(Vector(-10, -30, -60), Vector(2, 0, 0), Vector(0, 1, 0), Vector(0, 0, 2), m_light);
     scene.addObject(cube_2);
 
-    /* Sphere* sphere_3 = new Sphere(Vector(20, 5, -10), 5, m_blue); */
-    /* scene.addObject(sphere_3); */
+    Sphere* sphere_3 = new Sphere(Vector(10, 15, -10), 5, m_transparent);
+    scene.addObject(sphere_3);
+    Sphere* sphere_4 = new Sphere(Vector(10, 15, -10), 4.9, m_air);
+    scene.addObject(sphere_4);
+
     /* Sphere* sphere_2 = new Sphere(Vector(0, 0, -39), 40, transparent); */
     /* Union * union_1 = new Union(sphere_1, sphere_2); */
     /* Intersection * intersection_1 = new Intersection(sphere_1, sphere_2); */

@@ -7,9 +7,6 @@ fast: main.cpp
 clean:
 	rm -f *~
 
-mrproper:
-	rm -f hello
-
 watch:
 	fswatch -r ./*.cpp | xargs -n1 make
 
