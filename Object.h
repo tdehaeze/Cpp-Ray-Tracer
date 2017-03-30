@@ -25,9 +25,10 @@ public:
     virtual std::vector<double> getIntersections(const Ray rayon) const = 0;
     virtual Vector getNormal(const Ray rayon) const = 0;
     virtual bool isInside(const Vector point) const = 0;
-    virtual Ray getRandomRayToObject(Vector intersection) const = 0;
+    virtual Vector getRandomPoint() const = 0;
 
     /* Autres méthodes */
+    virtual Ray getRandomRayToObject(Vector intersection) const;
     virtual double getDistance(const Ray rayon) const;
     virtual Vector* getIntersect(const Ray rayon) const;
 

@@ -35,3 +35,9 @@ Vector* Object::getIntersect(Ray rayon) const{
     }
 }
 
+Ray Object::getRandomRayToObject(Vector intersection) const{
+    Vector point = this->getRandomPoint();
+
+    return Ray(intersection, point-intersection);
+}
+

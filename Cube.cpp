@@ -95,12 +95,11 @@ bool Cube::isInside(const Vector point) const{
     return true;
 }
 
-Ray Cube::getRandomRayToObject(Vector intersection) const{
+Vector Cube::getRandomPoint() const{
     double x1 = distrib(engine);
     double x2 = distrib(engine);
     double x3 = distrib(engine);
 
-    Vector point = this->point + x1*this->dir1 + x2*this->dir2 + x3*this->dir3;
-    return Ray(intersection, point-intersection);
+    return this->point + x1*this->dir1 + x2*this->dir2 + x3*this->dir3;
 }
 

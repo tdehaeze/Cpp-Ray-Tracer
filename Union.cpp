@@ -1,5 +1,8 @@
 #include "Union.h"
 
+extern std::default_random_engine engine;
+extern std::uniform_real_distribution <double> distrib;
+
 Union::Union(Object* m_object1, Object* m_object2)
     : Object(m_object1->getMaterial()), object1(m_object1), object2(m_object2) {}
 
@@ -70,7 +73,11 @@ bool Union::isInside(const Vector point) const{
     return (this->getObject1()->isInside(point) || this->getObject2()->isInside(point));
 }
 
-Ray Union::getRandomRayToObject(Vector intersection) const{
-    return this->getObject1()->getRandomRayToObject(intersection);
+Vector Union::getRandomPoint() const{
+    if (distrib(engine) < 0.5) {
+        return this->getObject1()->getRandomPoint();
+    } else {
+        return this->getObject2()->getRandomPoint();
+    }
 }
 

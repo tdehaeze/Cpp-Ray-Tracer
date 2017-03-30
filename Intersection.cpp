@@ -70,7 +70,13 @@ bool Intersection::isInside(const Vector point) const{
     return (this->getObject1()->isInside(point) && this->getObject2()->isInside(point));
 }
 
-Ray Intersection::getRandomRayToObject(Vector intersection) const{
-    return this->getObject1()->getRandomRayToObject(intersection);
+Vector Intersection::getRandomPoint() const{
+    Vector point_2 = this->getObject2()->getRandomPoint();
+
+    while (!this->getObject1()->isInside(point_2)) {
+        point_2 = this->getObject2()->getRandomPoint();
+    }
+        
+    return point_2;
 }
 

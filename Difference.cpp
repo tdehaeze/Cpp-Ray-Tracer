@@ -59,8 +59,14 @@ bool Difference::isInside(const Vector point) const{
     return (this->getObject1()->isInside(point) && !this->getObject2()->isInside(point));
 }
 
-Ray Difference::getRandomRayToObject(Vector intersection) const{
-    return this->getObject1()->getRandomRayToObject(intersection);
+Vector Difference::getRandomPoint() const{
+    Vector point_1 = this->getObject1()->getRandomPoint();
+
+    while (this->getObject2()->isInside(point_1)) {
+        point_1 = this->getObject1()->getRandomPoint();
+    }
+        
+    return point_1;
 }
 
 

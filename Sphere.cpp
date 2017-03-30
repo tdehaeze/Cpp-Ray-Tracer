@@ -61,14 +61,14 @@ bool Sphere::isInside(Vector point) const{
     return (std::pow(point.getX()-this->getOrigin().getX(), 2) + std::pow(point.getY()-this->getOrigin().getY(),2) + std::pow(point.getZ()-this->getOrigin().getZ(), 2) < std::pow(radius,2));
 }
 
-Ray Sphere::getRandomRayToObject(Vector intersection) const{
-    Vector p = this->getOrigin() + this->getRadius()*Vector(2*(distrib(engine)-0.5), 2*(distrib(engine)-0.5), 2*(distrib(engine)-0.5));
+Vector Sphere::getRandomPoint() const{
+    Vector point = this->getOrigin() + this->getRadius()*Vector(2*(distrib(engine)-0.5), 2*(distrib(engine)-0.5), 2*(distrib(engine)-0.5));
 
-    while(!this->isInside(p)) {
-        p = this->getOrigin() + this->getRadius()*Vector(distrib(engine), distrib(engine), distrib(engine));
+    while(!this->isInside(point)) {
+        point = this->getOrigin() + this->getRadius()*Vector(distrib(engine), distrib(engine), distrib(engine));
     }
     
-    return Ray(intersection, p-intersection);
+    return point;
 
 
     /* double a1 = distrib(engine); */

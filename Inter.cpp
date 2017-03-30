@@ -41,9 +41,9 @@ Inter::Inter(Scene scene, Ray m_ray, double m_n_before)
         }
 
         if (this->object->isInside(this->point_before)) {
-            std::cout << "point before should not be inside" << std::endl;
+            /* std::cout << "point before should not be inside" << std::endl; */
         } else if (!this->object->isInside(this->point_after)) {
-            std::cout << "point after should be inside" << std::endl;
+            /* std::cout << "point after should be inside" << std::endl; */
         }
     }
 }

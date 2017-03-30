@@ -41,8 +41,8 @@ std::vector<double> Plan::getIntersections(const Ray rayon) const{
     return intersections;
 }
 
-Ray Plan::getRandomRayToObject(Vector intersection) const{
-    std::cout << "getRandomRayToObject inside Plan NOT IMPLEMENTED" << std::endl;
-    return Ray(intersection, this->getOrigin()-intersection);
+/* TODO */
+Vector Plan::getRandomPoint() const{
+    return this->getOrigin();
 }
 
