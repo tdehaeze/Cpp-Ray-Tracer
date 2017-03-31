@@ -2,9 +2,9 @@
 
 #define Z_CAMERA 60
 #define ALPHA_DIFF 0.2
-#define NB_RAY 1
-#define MAX_BOUNCE 5
-#define MAX_REFRACT 5
+#define NB_RAY 10
+#define MAX_BOUNCE 1
+#define MAX_REFRACT 1
 #define NB_ANTI_ALIASING 10
 #define ANTI_ALIASING false
 #define CST_FRESNEL true
